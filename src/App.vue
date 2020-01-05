@@ -25,7 +25,7 @@
           <b-nav small>
             <b-nav-item-dropdown v-bind:text="this.username" right>
               <b-dropdown-item @click="intoAbout()">
-                <img src="https://placekitten.com/g/30/30" alt="Kitten" />
+                <img v-bind:src="this.iconUrl" alt="Kitten" />
                 个人中心
               </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
@@ -44,11 +44,25 @@
     <b-modal id="login" title="登录" hide-footer="true">
       <div align="center">
         <label for="txtAccount">账号:</label>
-        <input type="text" name="account" id="txtAccount" maxlength="16" title="请输入账号" />
+        <input
+          type="text"
+          v-model="account"
+          name="account"
+          id="txtAccount"
+          maxlength="16"
+          title="请输入账号"
+        />
       </div>
       <div align="center">
         <label for="txtPassword">密码:</label>
-        <input type="password" name="password" id="txtPassword" maxlength="16" title="请输入密码" />
+        <input
+          type="password"
+          v-model="password"
+          name="password"
+          id="txtPassword"
+          maxlength="16"
+          title="请输入密码"
+        />
       </div>
       <div align="center">
         <b-button variant="outline-primary" @click="login()">登录</b-button>
@@ -65,21 +79,57 @@ import store from "./store";
 
 export default {
   name: "main",
+  data() {
+    return {
+      account: "",
+      password: ""
+    };
+  },
   computed: {
     isLogin: function() {
       return this.$store.state.isLogin;
     },
     username: function() {
-      return this.$store.state.username;
+      return this.$store.state.userinfo.name;
+    },
+    iconUrl: function() {
+      return this.$store.state.userinfo.iconUrl;
     }
   },
   methods: {
     login() {
-      console.log("login");
-      this.$store.commit("login", {
-        username: "番茄"
-      });
-      this.$bvModal.hide("login");
+      if (this.account === "") {
+        alert("请输入账号");
+      } else if (this.password === "") {
+        alert("请输入密码");
+      }
+      const LOGIN_URL = "/user/login";
+
+      this.$axios(
+        LOGIN_URL,
+          {
+            params: {
+            "account": this.account,
+            "password": this.password,
+            }
+          }
+       ).then(response => {
+          if (response.data.status === "success") {
+            this.$store.commit("login", {
+              userinfo: response.data.data
+            });
+            this.$bvModal.hide("login");
+          } else {
+            alert(
+              "error code: " +
+                response.data.data.errorCode +
+                "\nerror message: " +
+                response.data.data.message
+            );
+          }
+        }).catch(response => {
+          alert(response);
+        })
     },
     logout() {
       this.$store.commit("logout");
@@ -96,7 +146,8 @@ export default {
     },
     intoAbout() {
       this.$router.push("/about");
-    }
+    },
+
   }
 };
 </script>

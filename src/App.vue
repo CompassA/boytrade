@@ -19,7 +19,7 @@
       <b-navbar-nav class="ml-auto">
         <div v-if="!this.isLogin">
           <b-button v-b-modal.login variant="light">登录</b-button>
-          <b-button v-b-modal.signup variant="light">注册</b-button>
+          <b-button v-b-modal.signup variant="light" @click="signup()">注册</b-button>
         </div>
         <div v-else>
           <b-nav small>
@@ -70,7 +70,55 @@
     </b-modal>
 
     <!--注册模态框-->
-    <b-modal id="signup" title="注册" hide-footer="true"></b-modal>
+    <b-modal id="signup" title="注册" hide-footer="true">
+      <div>
+        <label for="txtAccount">账号:</label>
+        <input
+          type="text"
+          v-model="signup_account"
+          name="account"
+          id="txtAccount"
+          maxlength="16"
+          title="请输入账号"
+        />
+      </div>
+      <div>
+        <label for="txtUserName">用户名:</label>
+        <input
+          type="text"
+          v-model="signup_username"
+          name="account"
+          id="txtUserName"
+          maxlength="16"
+          title="请输入用户名"
+        />
+      </div>
+      <div>
+        <label for="txtPassword">密码:</label>
+        <input
+          type="password"
+          v-model="signup_password"
+          name="password"
+          id="txtPassword"
+          maxlength="16"
+          title="请输入密码"
+        />
+      </div>
+      <div>
+        <label for="txtValidator">确认密码:</label>
+        <input
+          type="password"
+          v-model="signup_validator"
+          name="password"
+          id="txtValidator"
+          maxlength="16"
+          title="请输入密码"
+        />
+      </div>
+      <div>
+        <b-button variant="outline-primary" @click="signup()">注册</b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -82,8 +130,15 @@ export default {
   data() {
     return {
       account: "",
-      password: ""
+      password: "",
+      signup_account: "",
+      signup_password: "",
+      signup_name: "",
+      signup_validator: ""
     };
+  },
+  created() {
+    this.getPublicKey();
   },
   computed: {
     isLogin: function() {
@@ -100,36 +155,35 @@ export default {
     login() {
       if (this.account === "") {
         alert("请输入账号");
+        return;
       } else if (this.password === "") {
         alert("请输入密码");
+        return;
       }
       const LOGIN_URL = "/user/login";
 
-      this.$axios(
-        LOGIN_URL,
-          {
-            params: {
-            "account": this.account,
-            "password": this.password,
-            }
-          }
-       ).then(response => {
+      const password = this.$store.state.jsencrypt.encrypt(this.password);
+      const account = this.$store.state.jsencrypt.encrypt(this.account);
+
+      this.$axios(LOGIN_URL, {
+        params: {
+          "account": account,
+          "password": password
+        }
+      })
+        .then(response => {
           if (response.data.status === "success") {
             this.$store.commit("login", {
-              userinfo: response.data.data
+              userinfo: response.data.body
             });
             this.$bvModal.hide("login");
           } else {
-            alert(
-              "error code: " +
-                response.data.data.errorCode +
-                "\nerror message: " +
-                response.data.data.message
-            );
+            alert("登录失败, 原因： " + response.data.body.message);
           }
-        }).catch(response => {
-          alert(response);
         })
+        .catch(response => {
+          alert(response);
+        });
     },
     logout() {
       this.$store.commit("logout");
@@ -147,8 +201,26 @@ export default {
     intoAbout() {
       this.$router.push("/about");
     },
+    signup() {
 
-  }
+    },
+    getPublicKey() {
+      const PUBLIC_KEY_URL = "/encrypt/public";
+      this.$axios(PUBLIC_KEY_URL)
+        .then(response => {
+          if (response.data.status === "success") {
+            this.$store.commit("setPublicKey", {
+              public_key: response.data.body
+            });
+          } else {
+            alert(response.data.body.message);
+          }
+        })
+        .catch(response => {
+          alert(response);
+        });
+    }
+  },
 };
 </script>
 

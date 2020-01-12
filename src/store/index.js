@@ -1,10 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { JSEncrypt } from 'jsencrypt'
 
 Vue.use(Vuex)
+let base64 = require('js-base64').Base64;
+let jsencrypt = new JSEncrypt();
 
 export default new Vuex.Store({
   state: {
+    base64,
     userinfo: {
       id: -1,
       name: "",
@@ -12,6 +16,7 @@ export default new Vuex.Store({
       iconUrl: "",
     },
     isLogin: false,
+    jsencrypt,
   },
   mutations: {
     login(state, value) {
@@ -20,6 +25,9 @@ export default new Vuex.Store({
     },
     logout(state) {
       state.isLogin = false;
+    },
+    setPublicKey(state, value) {
+      state.jsencrypt.setPublicKey(value.public_key);
     }
   },
   actions: {

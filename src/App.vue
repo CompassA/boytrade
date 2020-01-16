@@ -116,7 +116,7 @@
         />
       </div>
       <div>
-        <b-button variant="outline-primary" @click="signup()">注册</b-button>
+        <b-button variant="outline-primary" @click="registry()">注册</b-button>
       </div>
     </b-modal>
   </div>
@@ -124,6 +124,7 @@
 
 <script>
 import store from "./store";
+import utils from "./js/utils.js";
 
 export default {
   name: "main",
@@ -133,7 +134,7 @@ export default {
       password: "",
       signup_account: "",
       signup_password: "",
-      signup_name: "",
+      signup_username: "",
       signup_validator: ""
     };
   },
@@ -162,19 +163,22 @@ export default {
       }
       const LOGIN_URL = "/user/login";
 
-      const password = this.$store.state.jsencrypt.encrypt(this.password);
-      const account = this.$store.state.jsencrypt.encrypt(this.account);
-
-      this.$axios(LOGIN_URL, {
-        params: {
-          "account": account,
-          "password": password
-        }
-      })
+      const loginDTO = {
+        "account": this.account,
+        "password": this.password,
+      };
+      const key = utils.randomKey();
+      const encryptData = utils.encrypt(JSON.stringify(loginDTO), key);
+      const serverRequst = {
+        "key": this.$store.state.jsencrypt.encrypt(key),
+        "encryptData": encryptData,
+      };
+      this.$axios
+        .post(LOGIN_URL, serverRequst)
         .then(response => {
           if (response.data.status === "success") {
             this.$store.commit("login", {
-              userinfo: response.data.body
+              "userinfo": response.data.body
             });
             this.$bvModal.hide("login");
           } else {
@@ -201,8 +205,44 @@ export default {
     intoAbout() {
       this.$router.push("/about");
     },
-    signup() {
-
+    registry() {
+      if (
+        this.signup_account === "" ||
+        this.signup_password === "" ||
+        this.signup_username === "" ||
+        this.signup_validator === ""
+      ) {
+        alert("信息不足, 无法注册");
+        return;
+      }
+      if (this.signup_password !== this.signup_validator) {
+        alert("校验密码错误");
+        return;
+      }
+      const userinfo = {
+        "account": this.signup_account,
+        "name": this.signup_username,
+        "password": this.signup_password
+      };
+      const key = utils.randomKey();
+      const encryptData = utils.encrypt(JSON.stringify(userinfo), key);
+      const encryptKey = this.$store.state.jsencrypt.encrypt(key);
+      const serverRequest = {
+        key: encryptKey,
+        encryptData: encryptData
+      };
+      this.$axios
+        .post("/user/registry", serverRequest)
+        .then(response => {
+          if (response.data.status === "success") {
+            alert("注册成功！");
+          } else {
+            alert("注册失败！" + response.data.body.message);
+          }
+        })
+        .catch(response => {
+          alert(response);
+        });
     },
     getPublicKey() {
       const PUBLIC_KEY_URL = "/encrypt/public";
@@ -220,7 +260,7 @@ export default {
           alert(response);
         });
     }
-  },
+  }
 };
 </script>
 

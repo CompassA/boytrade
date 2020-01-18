@@ -72,17 +72,6 @@
     <!--注册模态框-->
     <b-modal id="signup" title="注册" hide-footer="true">
       <div>
-        <label for="txtAccount">账号:</label>
-        <input
-          type="text"
-          v-model="signup_account"
-          name="account"
-          id="txtAccount"
-          maxlength="16"
-          title="请输入账号"
-        />
-      </div>
-      <div>
         <label for="txtUserName">用户名:</label>
         <input
           type="text"
@@ -132,7 +121,6 @@ export default {
     return {
       account: "",
       password: "",
-      signup_account: "",
       signup_password: "",
       signup_username: "",
       signup_validator: ""
@@ -207,7 +195,6 @@ export default {
     },
     registry() {
       if (
-        this.signup_account === "" ||
         this.signup_password === "" ||
         this.signup_username === "" ||
         this.signup_validator === ""
@@ -220,7 +207,6 @@ export default {
         return;
       }
       const userinfo = {
-        "account": this.signup_account,
         "name": this.signup_username,
         "password": this.signup_password
       };
@@ -228,14 +214,18 @@ export default {
       const encryptData = utils.encrypt(JSON.stringify(userinfo), key);
       const encryptKey = this.$store.state.jsencrypt.encrypt(key);
       const serverRequest = {
-        key: encryptKey,
-        encryptData: encryptData
+        "key": encryptKey,
+        "encryptData": encryptData
       };
       this.$axios
         .post("/user/registry", serverRequest)
         .then(response => {
           if (response.data.status === "success") {
-            alert("注册成功！");
+            alert("注册成功！账号为: " + response.data.body.account);
+            this.$store.commit("login", {
+              "userinfo": response.data.body
+            });
+            this.$bvModal.hide("signup");
           } else {
             alert("注册失败！" + response.data.body.message);
           }

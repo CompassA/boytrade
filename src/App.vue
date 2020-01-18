@@ -3,6 +3,7 @@
     <b-navbar type="light" variant="light">
       <b-navbar-brand>校园二手物品交易平台</b-navbar-brand>
       <b-navbar-nav tabs class="ml-auto">
+        <b-nav-item @click="intoHome()">首页</b-nav-item>
         <b-nav-item @click="intoGoods()">最新发布</b-nav-item>
         <b-nav-item @click="intoGoods()">书本</b-nav-item>
         <b-nav-item @click="intoGoods()">资料</b-nav-item>
@@ -33,12 +34,19 @@
             </b-nav-item-dropdown>
             <b-nav-item @click="intoShoppingcart()">购物车</b-nav-item>
             <b-nav-item @click="intoFavourites()">收藏夹</b-nav-item>
+            <b-nav-item @click="intoPublish()">发布商品</b-nav-item>
           </b-nav>
         </div>
       </b-navbar-nav>
     </b-navbar>
 
-    <router-view></router-view>
+    <b-container class="bv-example-row">
+      <b-row class="justify-content-md-center">
+        <b-col col lg="6">
+          <router-view></router-view>
+        </b-col>
+      </b-row>
+    </b-container>
 
     <!--登录模态框-->
     <b-modal id="login" title="登录" hide-footer="true">
@@ -152,21 +160,21 @@ export default {
       const LOGIN_URL = "/user/login";
 
       const loginDTO = {
-        "account": this.account,
-        "password": this.password,
+        account: this.account,
+        password: this.password
       };
       const key = utils.randomKey();
       const encryptData = utils.encrypt(JSON.stringify(loginDTO), key);
       const serverRequst = {
-        "key": this.$store.state.jsencrypt.encrypt(key),
-        "encryptData": encryptData,
+        key: this.$store.state.jsencrypt.encrypt(key),
+        encryptData: encryptData
       };
       this.$axios
         .post(LOGIN_URL, serverRequst)
         .then(response => {
           if (response.data.status === "success") {
             this.$store.commit("login", {
-              "userinfo": response.data.body
+              userinfo: response.data.body
             });
             this.$bvModal.hide("login");
           } else {
@@ -193,6 +201,12 @@ export default {
     intoAbout() {
       this.$router.push("/about");
     },
+    intoHome() {
+      this.$router.push("/");
+    },
+    intoPublish() {
+      this.$router.push("/publish");
+    },
     registry() {
       if (
         this.signup_password === "" ||
@@ -207,15 +221,15 @@ export default {
         return;
       }
       const userinfo = {
-        "name": this.signup_username,
-        "password": this.signup_password
+        name: this.signup_username,
+        password: this.signup_password
       };
       const key = utils.randomKey();
       const encryptData = utils.encrypt(JSON.stringify(userinfo), key);
       const encryptKey = this.$store.state.jsencrypt.encrypt(key);
       const serverRequest = {
-        "key": encryptKey,
-        "encryptData": encryptData
+        key: encryptKey,
+        encryptData: encryptData
       };
       this.$axios
         .post("/user/registry", serverRequest)
@@ -223,7 +237,7 @@ export default {
           if (response.data.status === "success") {
             alert("注册成功！账号为: " + response.data.body.account);
             this.$store.commit("login", {
-              "userinfo": response.data.body
+              userinfo: response.data.body
             });
             this.$bvModal.hide("signup");
           } else {

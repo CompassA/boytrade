@@ -29,6 +29,11 @@ const routes = [
     path: '/favourites',
     name: 'favourites',
     component: () => import(/* webpackChunkName: "favourites" */ '../views/Favourites.vue')
+  },
+  {
+    path: '/publish',
+    name: 'publish',
+    component: () => import(/* webpackChunkName: "publish" */ '../views/Publish.vue')
   }
 ]
 

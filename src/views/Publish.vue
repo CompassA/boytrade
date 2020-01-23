@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+    <b-form @submit="onSubmit" @reset="onReset" enctype="multipart/form-data" v-if="show">
       <b-form-group id="productName" label="商品名称" label-for="txtProductName">
-        <b-form-input id="txtProductName" v-model="product.name" required placeholder="请输入商品名称"></b-form-input>
+        <b-form-input id="txtProductName" v-model="product.productName" required placeholder="请输入商品名称"></b-form-input>
       </b-form-group>
 
       <b-form-group id="productDescription" label="商品描述" label-for="txtAreaDescription">
@@ -19,7 +19,7 @@
       <b-form-group id="category" label="商品类型:" label-for="categoryType">
         <b-form-select
           id="categoryType"
-          v-model="product.category"
+          v-model="product.categoryId"
           :options="categories"
           value-field="value"
           text-field="text"
@@ -32,8 +32,9 @@
           id="productImageFile"
           v-model="product.imgFile"
           placeholder="请上传商品图片"
-          accept=".jpg, .png, .gif"
+          accept=".jpg, .png"
           required
+          @input="upLoadImage()"
         ></b-form-file>
       </b-form-group>
 
@@ -63,26 +64,27 @@
         />
       </b-form-group>
 
-      <b-form-group id="productPrice" label="商品价格" label-for="txtPrice">
-        
-      </b-form-group>
-      <b-button type="submit" tvariant="primary">创建</b-button>
+      <b-form-group id="productPrice" label="商品价格" label-for="txtPrice"></b-form-group>
+      <b-button type="submit" tvariant="primary" ref="submitButton">创建</b-button>
       <b-button type="reset" variant="danger">清空</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
       product: {
-        name: "",
+        productName: "",
         description: "",
-        category: null,
+        categoryId: null,
         imgFile: null,
         stock: 1,
-        price: 1.0
+        price: 1.0,
+        iconUrl: ""
       },
       categories: [
         { text: "书本", value: 1 },
@@ -98,11 +100,22 @@ export default {
   methods: {
     onSubmit(evt) {
       evt.preventDefault();
-      if (this.product.imgFile.size / 1024 / 1024 > 2) {
+      if (this.product.imgFile.size  > 2 * 1024 * 1024) {
         alert("上传的图片不能大于2M！");
         return;
       }
-      alert(JSON.stringify(this.product));
+      this.$axios.put("/product/create", this.product)
+        .then(response => {
+          if (response.data.status === "success") {
+            alert("创建商品成功!");
+            this.$router.push("/about");
+          } else {
+            alert("商品创建失败!");
+          }
+        })
+        .catch(response => {
+          alert(response);
+        });
     },
     onReset(evt) {
       evt.preventDefault();
@@ -117,6 +130,28 @@ export default {
       this.$nextTick(() => {
         this.show = true;
       });
+    },
+    upLoadImage() {
+      if (this.product.imgFile === null) {
+        return;
+      }
+      this.$refs.submitButton.disabled = true;
+      let imageData = new FormData();
+      imageData.append("imgFile", this.product.imgFile);
+      this.$axios
+        .post("/file/upload", imageData)
+        .then(response => {
+          if (response.data.status === "success") {
+            this.product.iconUrl = response.data.body;
+            this.$refs.submitButton.disabled = false;
+          } else {
+            alert(response.data.body.message);
+            this.product.imgFile = null;
+          }
+        })
+        .catch(response => {
+          alert(response);
+        });
     }
   }
 };

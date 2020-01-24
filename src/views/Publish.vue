@@ -34,7 +34,6 @@
           placeholder="请上传商品图片"
           accept=".jpg, .png"
           required
-          @input="upLoadImage()"
         ></b-form-file>
       </b-form-group>
 
@@ -64,7 +63,6 @@
         />
       </b-form-group>
 
-      <b-form-group id="productPrice" label="商品价格" label-for="txtPrice"></b-form-group>
       <b-button type="submit" tvariant="primary" ref="submitButton">创建</b-button>
       <b-button type="reset" variant="danger">清空</b-button>
     </b-form>
@@ -84,7 +82,8 @@ export default {
         imgFile: null,
         stock: 1,
         price: 1.0,
-        iconUrl: ""
+        iconUrl: "",
+        userId: -1,
       },
       categories: [
         { text: "书本", value: 1 },
@@ -97,13 +96,26 @@ export default {
       show: true
     };
   },
+  computed: {
+    userId: function() {
+      return this.$parent.$store.state.userinfo.userId;
+    }
+  },
   methods: {
-    onSubmit(evt) {
+    async onSubmit(evt) {
       evt.preventDefault();
       if (this.product.imgFile.size  > 2 * 1024 * 1024) {
         alert("上传的图片不能大于2M！");
         return;
       }
+      if (this.userId !== -1) {
+        this.product.userId = this.userId;
+      } else {
+        alert("登录失效");
+        return;
+      }
+      await this.upLoadImage();
+
       this.$axios.put("/product/create", this.product)
         .then(response => {
           if (response.data.status === "success") {
@@ -131,14 +143,14 @@ export default {
         this.show = true;
       });
     },
-    upLoadImage() {
+    async upLoadImage() {
       if (this.product.imgFile === null) {
         return;
       }
       this.$refs.submitButton.disabled = true;
       let imageData = new FormData();
       imageData.append("imgFile", this.product.imgFile);
-      this.$axios
+      await this.$axios
         .post("/file/upload", imageData)
         .then(response => {
           if (response.data.status === "success") {

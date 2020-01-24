@@ -4,7 +4,7 @@
       <b-navbar-brand>校园二手物品交易平台</b-navbar-brand>
       <b-navbar-nav tabs class="ml-auto">
         <b-nav-item @click="intoHome()">首页</b-nav-item>
-        <b-nav-item @click="intoGoods()">最新发布</b-nav-item>
+        <b-nav-item @click="intoGoods()">全部商品</b-nav-item>
         <b-nav-item @click="intoGoods()">书本</b-nav-item>
         <b-nav-item @click="intoGoods()">资料</b-nav-item>
         <b-nav-item @click="intoGoods()">电器</b-nav-item>

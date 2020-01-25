@@ -34,6 +34,11 @@ const routes = [
     path: '/publish',
     name: 'publish',
     component: () => import(/* webpackChunkName: "publish" */ '../views/Publish.vue')
+  },
+  {
+    path: '/detail',
+    name: 'detail',
+    component: () => import(/* webpackChunkName: "detail" */ '../views/ProductDetail.vue')
   }
 ]
 

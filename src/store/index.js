@@ -16,6 +16,11 @@ export default new Vuex.Store({
       iconUrl: "",
     },
     isLogin: false,
+    productList: [],
+    productDetail: {
+      productVO: null,
+      userVO: null,
+    },
     jsencrypt,
   },
   mutations: {
@@ -28,6 +33,13 @@ export default new Vuex.Store({
     },
     setPublicKey(state, value) {
       state.jsencrypt.setPublicKey(value.public_key);
+    },
+    updateProductList(state, value) {
+      state.productList = value;
+    },
+    updateProductDetail(state, value) {
+      state.productDetail.productVO = value.productVO;
+      state.productDetail.userVO = value.userVO;
     }
   },
   actions: {

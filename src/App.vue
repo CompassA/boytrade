@@ -4,12 +4,12 @@
       <b-navbar-brand>校园二手物品交易平台</b-navbar-brand>
       <b-navbar-nav tabs class="ml-auto">
         <b-nav-item @click="intoHome()">首页</b-nav-item>
-        <b-nav-item @click="intoGoods()">全部商品</b-nav-item>
-        <b-nav-item @click="intoGoods()">书本</b-nav-item>
-        <b-nav-item @click="intoGoods()">资料</b-nav-item>
-        <b-nav-item @click="intoGoods()">电器</b-nav-item>
-        <b-nav-item @click="intoGoods()">宿舍用品</b-nav-item>
-        <b-nav-item @click="intoGoods()">化妆品</b-nav-item>
+        <b-nav-item @click="intoGoods(-1)">全部商品</b-nav-item>
+        <b-nav-item @click="intoGoods(-1)">书本</b-nav-item>
+        <b-nav-item @click="intoGoods(-1)">资料</b-nav-item>
+        <b-nav-item @click="intoGoods(-1)">电器</b-nav-item>
+        <b-nav-item @click="intoGoods(-1)">宿舍用品</b-nav-item>
+        <b-nav-item @click="intoGoods(-1)">化妆品</b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
         <b-nav-form>
@@ -42,7 +42,7 @@
 
     <b-container class="bv-example-row">
       <b-row class="justify-content-md-center">
-        <b-col col lg="6">
+        <b-col col lg="11">
           <router-view></router-view>
         </b-col>
       </b-row>
@@ -149,6 +149,21 @@ export default {
     }
   },
   methods: {
+    updateProduct(url, data) {
+      this.$axios.get(url, data).then(response => {
+        if (response.data.status === "success") {
+          this.$store.commit("updateProductList", response.data.body);
+          this.$router.push("/goods");
+          return true;
+        } else {
+          alert(response.data.body.message);
+          return false;
+        }
+      }).catch(response => {
+        alert(response);
+        return false;
+      });
+    },
     login() {
       if (this.account === "") {
         alert("请输入账号");
@@ -195,8 +210,9 @@ export default {
     intoFavourites() {
       this.$router.push("/favourites");
     },
-    intoGoods() {
-      this.$router.push("/goods");
+    intoGoods(typeId) {
+      const url = "/product/info";
+      const res = this.updateProduct(url, { params: {typeId: typeId}});
     },
     intoAbout() {
       this.$router.push("/about");
@@ -270,7 +286,7 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family: "幼圆", Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 18px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -278,18 +294,5 @@ export default {
   color: #2c3e50;
   padding: 0;
   margin: 0;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 </style>

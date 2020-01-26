@@ -38,13 +38,13 @@
               maxlength="6"
               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
               oninput="if(value.length>6)value=value.slice(0,6)"
-              v-model="this.amount"
+              v-model="amount"
             />
             库存：
             <b>{{productDetail.productVO.stock}}</b>
           </div>
           <div>
-            <b-button variant="dark">立即购买</b-button>
+            <b-button variant="dark" @click="buyAtOnce()">立即购买</b-button>
             <b-button variant="dark">加入购物车</b-button>
             <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
           </div>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import utils from "../js/utils.js";
+
 export default {
   data() {
     return {
@@ -64,11 +66,48 @@ export default {
   computed: {
     productDetail: function() {
       return this.$parent.$store.state.productDetail;
-    }
+    },
   },
   methods: {
     goBack() {
       this.$parent.$router.go(-1);
+    },
+    buyAtOnce() {
+      if (this.amount > this.productDetail.productVO.stock || this.amount < 1) {
+        alert("数量不合法");
+        return;
+      }
+      const orderDetail = new Array();
+      orderDetail.push({
+        "productId": this.productDetail.productVO.productId,
+        "productName": this.productDetail.productVO.productName,
+        "productAmount": this.amount,
+        "productPrice": this.productDetail.productVO.price,
+        "iconUrl": this.productDetail.productVO.iconUrl,
+      });
+      const orderDTO = {
+        "userId": this.productDetail.userVO.userId,
+        "userName": this.productDetail.userVO.name,
+        "userPhone": "",
+        "userAddress": "",
+        "productDetails": orderDetail,
+      };
+      const key = utils.randomKey();
+      const encryptData = utils.encrypt(JSON.stringify(orderDTO), key);
+      const serverRequst = {
+        key: this.$store.state.jsencrypt.encrypt(key),
+        encryptData: encryptData
+      };
+      this.$axios.post("/order/create", serverRequst).then(response => {
+        if (response.data.status === "success") {
+          alert("成功");
+        } else {
+          alert(response.data.body.message + "\n错误码：" + response.data.body.errorCode);
+        }
+      })
+      .catch(response => {
+        alert(response);
+      });
     }
   }
 };

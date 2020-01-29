@@ -137,6 +137,15 @@ export default {
   },
   created() {
     this.getPublicKey();
+    this.$axios.get("/user/session_status", {body: "with body"}).then(response => {
+      if (response.data.status === "success") {
+        if (response.data.body !== null) {
+          this.$store.commit("login", { userinfo: response.data.body });
+        } 
+      }
+    }).catch(response => {
+      alert(response);
+    });
   },
   computed: {
     isLogin: function() {
@@ -202,6 +211,7 @@ export default {
         });
     },
     logout() {
+      this.$axios.get("/user/logout", {body: "with body"});
       this.$store.commit("logout");
       this.$router.push("/");
     },

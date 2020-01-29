@@ -13,7 +13,24 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    children: [
+      {
+        path: '/about/user_product',
+        name: 'user_product',
+        component: () => import(/* webpackChunkName: "detail" */ '../views/UserProduct.vue')
+      },
+      {
+        path: '/about/order',
+        name: 'order',
+        component: () => import(/* webpackChunkName: order" */ '../views/Order.vue')
+      },
+      {
+        path: '/about/info_editor',
+        name: 'editor',
+        component: () => import(/* webpackChunkName: order" */ '../views/InfoEditor.vue')
+      }
+    ]
   },
   {
     path: '/goods',
@@ -39,7 +56,12 @@ const routes = [
     path: '/detail',
     name: 'detail',
     component: () => import(/* webpackChunkName: "detail" */ '../views/ProductDetail.vue')
-  }
+  },
+  {
+    path: '/currentOrder',
+    name: 'currentOrder',
+    component: () => import(/* webpackChunkName: "currentOrder" */ '../views/CurrentOrder.vue')
+  },
 ]
 
 const router = new VueRouter({

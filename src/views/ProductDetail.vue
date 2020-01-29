@@ -100,7 +100,9 @@ export default {
       };
       this.$axios.post("/order/create", serverRequst).then(response => {
         if (response.data.status === "success") {
-          alert("成功");
+          alert("下单成功");
+          this.$store.state.currentOrder = response.data.body;
+          this.$router.push('/currentOrder');
         } else {
           alert(response.data.body.message + "\n错误码：" + response.data.body.errorCode);
         }

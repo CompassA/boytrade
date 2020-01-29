@@ -40,13 +40,14 @@
       </b-navbar-nav>
     </b-navbar>
 
-    <b-container class="bv-example-row">
+    <router-view></router-view>
+    <!-- <b-container class="bv-example-row">
       <b-row class="justify-content-md-center">
         <b-col col lg="11">
           <router-view></router-view>
         </b-col>
       </b-row>
-    </b-container>
+    </b-container> -->
 
     <!--登录模态框-->
     <b-modal id="login" title="登录" hide-footer="true">

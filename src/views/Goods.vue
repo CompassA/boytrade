@@ -29,7 +29,21 @@ export default {
     }
   },
   methods: {
-    intoProductDetail(productVO) {
+    async intoProductDetail(productVO) {
+      var productDetail = {};
+      await this.$axios.get("/product/detail", {
+        body: "with body",
+        params: {
+          productId: productVO.productId
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          productDetail = response.data.body;
+        }
+      }).catch(response => {
+        alert(response);
+      });
+
       this.$axios
         .get("/user/part_info", {
           //坑！无body时，get请求的Content-Type会被去掉，后端无法接受请求
@@ -42,7 +56,7 @@ export default {
           if (response.data.status === "success") {
             this.$parent.$store.commit("updateProductDetail", {
               userVO: response.data.body,
-              productVO: productVO,
+              productVO: productDetail,
             });
             this.$parent.$router.push("/detail"); 
           }

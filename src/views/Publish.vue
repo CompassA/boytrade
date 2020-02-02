@@ -99,6 +99,9 @@ export default {
   computed: {
     userId: function() {
       return this.$parent.$store.state.userinfo.userId;
+    },
+    token: function() {
+      return this.$parent.$store.state.token;
     }
   },
   methods: {
@@ -116,7 +119,7 @@ export default {
       }
       await this.upLoadImage();
 
-      this.$axios.put("/product/create", this.product)
+      this.$axios.put("/product/create?token=" + this.token, this.product)
         .then(response => {
           if (response.data.status === "success") {
             alert("创建商品成功!");
@@ -151,7 +154,7 @@ export default {
       let imageData = new FormData();
       imageData.append("imgFile", this.product.imgFile);
       await this.$axios
-        .post("/file/upload", imageData)
+        .post("/file/upload?token="+this.token, imageData)
         .then(response => {
           if (response.data.status === "success") {
             this.product.iconUrl = response.data.body;

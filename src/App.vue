@@ -137,7 +137,12 @@ export default {
   },
   created() {
     this.getPublicKey();
-    this.$axios.get("/user/session_status", {body: "with body"}).then(response => {
+    this.$axios.get("/user/session_status", {
+      body: "with body",
+      params: {
+        token: this.token,
+      }
+    }).then(response => {
       if (response.data.status === "success") {
         if (response.data.body !== null) {
           this.$store.commit("login", { userinfo: response.data.body });
@@ -156,6 +161,9 @@ export default {
     },
     iconUrl: function() {
       return this.$store.state.userinfo.iconUrl;
+    },
+    token: function() {
+      return this.$store.state.token;
     }
   },
   methods: {
@@ -201,6 +209,7 @@ export default {
             this.$store.commit("login", {
               userinfo: response.data.body
             });
+            this.$store.commit("updateToken", response.data.body.token);
             this.$bvModal.hide("login");
           } else {
             alert("登录失败, 原因： " + response.data.body.message);
@@ -211,7 +220,12 @@ export default {
         });
     },
     logout() {
-      this.$axios.get("/user/logout", {body: "with body"});
+      this.$axios.get("/user/logout", {
+        body: "with body",
+        params: {
+          token: this.token
+        }
+      });
       this.$store.commit("logout");
       this.$router.push("/");
     },
@@ -266,6 +280,7 @@ export default {
             this.$store.commit("login", {
               userinfo: response.data.body
             });
+            this.$store.commit("updateToken", response.data.body.token);
             this.$bvModal.hide("signup");
           } else {
             alert("注册失败！" + response.data.body.message);

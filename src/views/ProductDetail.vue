@@ -67,6 +67,9 @@ export default {
     productDetail: function() {
       return this.$parent.$store.state.productDetail;
     },
+    token: function() {
+      return this.$parent.$store.state.token;
+    }
   },
   methods: {
     goBack() {
@@ -98,7 +101,7 @@ export default {
         key: this.$store.state.jsencrypt.encrypt(key),
         encryptData: encryptData
       };
-      this.$axios.post("/order/create", serverRequst).then(response => {
+      this.$axios.post("/order/create?token=" + this.token, serverRequst).then(response => {
         if (response.data.status === "success") {
           alert("下单成功");
           this.$store.state.currentOrder = response.data.body;

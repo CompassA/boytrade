@@ -101,7 +101,7 @@ export default {
       return this.$parent.$store.state.userinfo.userId;
     },
     token: function() {
-      return this.$parent.$store.state.token;
+      return window.localStorage["token"];
     }
   },
   methods: {
@@ -158,7 +158,6 @@ export default {
         .then(response => {
           if (response.data.status === "success") {
             this.product.iconUrl = response.data.body;
-            this.$refs.submitButton.disabled = false;
           } else {
             alert(response.data.body.message);
             this.product.imgFile = null;

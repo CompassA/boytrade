@@ -68,7 +68,7 @@ export default {
       return this.$parent.$store.state.productDetail;
     },
     token: function() {
-      return this.$parent.$store.state.token;
+      return window.localStorage["token"];
     }
   },
   methods: {

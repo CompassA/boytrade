@@ -140,7 +140,7 @@ export default {
     this.$axios.get("/user/session_status", {
       body: "with body",
       params: {
-        token: this.token,
+        token: window.localStorage["token"],
       }
     }).then(response => {
       if (response.data.status === "success") {
@@ -209,7 +209,7 @@ export default {
             this.$store.commit("login", {
               userinfo: response.data.body
             });
-            this.$store.commit("updateToken", response.data.body.token);
+            window.localStorage["token"] = response.data.body.token;
             this.$bvModal.hide("login");
           } else {
             alert("登录失败, 原因： " + response.data.body.message);
@@ -227,6 +227,7 @@ export default {
         }
       });
       this.$store.commit("logout");
+      window.localStorage["token"] = "";
       this.$router.push("/");
     },
     intoShoppingcart() {
@@ -280,7 +281,7 @@ export default {
             this.$store.commit("login", {
               userinfo: response.data.body
             });
-            this.$store.commit("updateToken", response.data.body.token);
+            window.localStorage["token"] = response.data.body.token;
             this.$bvModal.hide("signup");
           } else {
             alert("注册失败！" + response.data.body.message);

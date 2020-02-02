@@ -1,10 +1,9 @@
 <template>
   <div>
     <b-button-group>
-      <b-button>待付款</b-button>
-      <b-button>待发货</b-button>
-      <b-button>待收货</b-button>
-      <b-button>已完成</b-button>
+      <b-button @click="getInfoBystatus(0)">待付款</b-button>
+      <b-button @click="getInfoBystatus(1)">待发货</b-button>
+      <b-button @click="getInfoBystatus(2)">待收货</b-button>
     </b-button-group>
     <div class="order_model" v-for="order in orderList" v-bind:key="order.orderId">
       <p>订单编号: {{order.orderId}}</p>
@@ -48,18 +47,33 @@ export default {
   },
   methods: {
     pay(order) {
-      alert(JSON.stringify(order));
+      this.$store.state.currentOrder = order;
+      this.$router.push('/currentOrder');
     },
     cancel(order) {
       alert(JSON.stringify(order));
+    },
+    getInfoBystatus(orderStatus) {
+      this.$axios.get("/order/query_status", {
+        body: "with body",
+        params: {
+          userId: this.$store.state.userinfo.userId,
+          status: orderStatus,
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          this.$store.commit("updateOrderList", response.data.body);
+        }
+      })
     }
   },
   created() {
     this.$axios
-      .get("/order/query_user", {
+      .get("/order/query_status", {
         body: "with body",
         params: {
-          userId: this.$store.state.userinfo.userId
+          userId: this.$store.state.userinfo.userId,
+          status: 0,
         }
       })
       .then(response => {

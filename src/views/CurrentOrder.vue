@@ -24,18 +24,47 @@
 </template>
 
 <script>
+import utils from '../js/utils';
+
 export default {
+  data() {
+    return {
+      fields: [
+        { key: "productName", label: "商品名称" },
+        { key: "productAmount", label: "数量" },
+        { key: "productPrice", label: "单价" },
+        { key: "iconUrl", label: "图片" }
+      ]
+    }
+  },
   computed: {
     order: function() {
       return this.$parent.$store.state.currentOrder;
+    },
+    token: function() {
+      return window.localStorage["token"];
     }
   },
   methods: {
     pay(order) {
-      alert(JSON.stringify(order));
+      const key = utils.randomKey();
+      const serverRequest = {
+        key: this.$store.state.jsencrypt.encrypt(key),
+        encryptData: utils.encrypt(JSON.stringify(order), key),
+      }
+      this.$axios.post("/order/trade_pay?token=" + this.token, serverRequest).then(response => {
+        if (response.data.status === "success") {
+          alert("支付成功");
+          this.$router.push("/about/order");
+        } else {
+          alert(response.data.body.message);
+        }
+      }).catch(response => {
+        alert(response);
+      });
     },
     notPay() {
-      this.$router.push("/");
+      this.$parent.$router.go(-1);
     }
   }
 }
@@ -47,7 +76,7 @@ export default {
   margin-left: 100px;
   padding: 10px 20px 10px 20px;
   text-align: left;
-  width: 600px;
+  width: 800px;
   font-size: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }

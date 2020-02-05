@@ -23,6 +23,7 @@ export default new Vuex.Store({
       userVO: null,
     },
     orderList: [],
+    sellerOrderList: [],
     jsencrypt,
   },
   mutations: {
@@ -58,6 +59,9 @@ export default new Vuex.Store({
     },
     updateOrderList(state, value) {
       state.orderList = value;
+    },
+    updateSellerOrderList(state, value) {
+      state.sellerOrderList = value;
     }
   },
   actions: {

@@ -67,6 +67,9 @@ export default {
     productDetail: function() {
       return this.$parent.$store.state.productDetail;
     },
+    currentUserInfo: function() {
+      return this.$parent.$store.state.userinfo;
+    },
     token: function() {
       return window.localStorage["token"];
     }
@@ -77,11 +80,17 @@ export default {
     },
     buyAtOnce() {
       if (this.amount > this.productDetail.productVO.stock || this.amount < 1) {
-        alert("数量不合法");
+        alert("数量不合法！");
         return;
       }
+      if (this.productDetail.productVO.userId === this.currentUserInfo.userId) {
+        alert("您不能购买自己发布的商品！");
+        return;
+      }
+      
       const orderDetail = new Array();
       orderDetail.push({
+        "ownerId": this.productDetail.productVO.userId,
         "productId": this.productDetail.productVO.productId,
         "productName": this.productDetail.productVO.productName,
         "productAmount": this.amount,
@@ -89,7 +98,7 @@ export default {
         "iconUrl": this.productDetail.productVO.iconUrl,
       });
       const orderDTO = {
-        "userId": this.productDetail.userVO.userId,
+        "userId": this.currentUserInfo.userId,
         "userName": this.productDetail.userVO.name,
         "userPhone": "",
         "userAddress": "",

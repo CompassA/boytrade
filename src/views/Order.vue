@@ -1,9 +1,9 @@
 <template>
   <div>
     <b-button-group>
-      <b-button @click="getInfoBystatus(0)">待付款</b-button>
-      <b-button @click="getInfoBystatus(1)">待发货</b-button>
-      <b-button @click="getInfoBystatus(2)">待收货</b-button>
+      <b-button @click="getInfoBystatus(0)">待我付款</b-button>
+      <b-button @click="getInfoBystatus(1)">待卖家发货</b-button>
+      <b-button @click="getInfoBystatus(2)">待我收货</b-button>
     </b-button-group>
     <div class="order_model" v-for="order in orderList" v-bind:key="order.orderId">
       <p>订单编号: {{order.orderId}}</p>

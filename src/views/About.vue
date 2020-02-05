@@ -3,8 +3,10 @@
     <div class="left_nav">
       <ul>
         <li @click="intoInfoEditor()">资料编辑</li>
+        <li>发布商品</li> 
         <li @click="intoUserProduct()">商品管理</li>
-        <li @click="intoOrder()">我的订单</li>
+        <li @click="intoOrder()">买方订单</li>
+        <li @click="intoSellerOrder()">卖方订单</li>
       </ul>
     </div>
     <router-view class="right_block"></router-view>
@@ -22,6 +24,9 @@ export default {
     },
     intoOrder() {
       this.$parent.$router.push("/about/order");
+    },
+    intoSellerOrder() {
+      this.$parent.$router.push("/about/seller_order");
     }
   }
 };

@@ -9,6 +9,8 @@ let jsencrypt = new JSEncrypt();
 export default new Vuex.Store({
   state: {
     base64,
+    sellerOrderButtionStatus: 1,
+    buyerOrderButtionStatus: 1,
     userinfo: {
       userId: -1,
       name: "",
@@ -62,6 +64,12 @@ export default new Vuex.Store({
     },
     updateSellerOrderList(state, value) {
       state.sellerOrderList = value;
+    },
+    updateBuyerButtonStatus(state, value) {
+      state.buyerOrderButtionStatus = value;
+    },
+    updateSellerButtonStatus(state, value) {
+      state.sellerOrderButtionStatus = value;
     }
   },
   actions: {

@@ -4,6 +4,9 @@
       <p>订单编号: {{order.orderId}}</p>
       <p>订单总金额: {{order.orderAmount}}</p>
       <p>创建时间: {{order.createTime}}</p>
+      <p>买家姓名: {{order.userName}}</p>
+      <p>手机号码: {{order.userPhone}}</p>
+      <p>联系地址: {{order.userAddress}}</p>
       <p>订单详情：</p>
       <b-table
         style="width: 500px;"

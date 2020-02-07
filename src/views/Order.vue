@@ -104,7 +104,7 @@ export default {
       }).then(response => {
         if (response.data.status === "success") {
           alert("确认收货成功！");
-          this.$router.go(0);
+          this.getFinishedOrders();
         } else {
           alert("确认收货失败！\n" + response.data.body.message);
         }

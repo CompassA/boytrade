@@ -23,6 +23,18 @@
 
 <script>
 export default {
+  created() {
+    this.$axios.get("/product/info", { params: {typeId: 1}}).then(response => {
+        if (response.data.status === "success") {
+          this.$store.commit("updateProductList", response.data.body);
+        } else {
+          alert(response.data.body.message);
+        }
+      }).catch(response => {
+        alert(response);
+        return false;
+      });
+  },
   computed: {
     products: function() {
       return this.$parent.$store.state.productList;

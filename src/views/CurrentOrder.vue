@@ -58,6 +58,7 @@ export default {
       this.$axios.post("/order/trade_pay?token=" + this.token, serverRequest).then(response => {
         if (response.data.status === "success") {
           alert("支付成功");
+          this.$store.commit("updateBuyerButtonStatus", 2);
           this.$router.push("/about/order");
         } else {
           alert(response.data.body.message);
@@ -67,7 +68,7 @@ export default {
       });
     },
     notPay() {
-      this.$parent.$router.go(-1);
+      this.$router.push("/goods");
     }
   }
 }

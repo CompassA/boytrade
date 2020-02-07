@@ -11,7 +11,6 @@
       <p>订单总金额: {{order.orderAmount}}</p>
       <p>创建时间: {{order.createTime}}</p>
       <p>买家姓名: {{order.userName}}</p>
-      <p>用户名称: {{order.userName}}</p>
       <p>手机号码: {{order.userPhone}}</p>
       <p>联系地址: {{order.userAddress}}</p>
       <p>订单详情：</p>
@@ -97,7 +96,7 @@ export default {
       }).then(response => {
         if (response.data.status === "success") {
           alert("订单已经更改为发送状态！");
-          this.$router.go(0);
+          this.getSentOrders();
         } else {
           alert(response.data.body.message);
         }

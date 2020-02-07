@@ -167,21 +167,6 @@ export default {
     }
   },
   methods: {
-    updateProduct(url, data) {
-      this.$axios.get(url, data).then(response => {
-        if (response.data.status === "success") {
-          this.$store.commit("updateProductList", response.data.body);
-          this.$router.push("/goods");
-          return true;
-        } else {
-          alert(response.data.body.message);
-          return false;
-        }
-      }).catch(response => {
-        alert(response);
-        return false;
-      });
-    },
     login() {
       if (this.account === "") {
         alert("请输入账号");
@@ -237,8 +222,7 @@ export default {
       this.$router.push("/favourites");
     },
     intoGoods(typeId) {
-      const url = "/product/info";
-      const res = this.updateProduct(url, { params: {typeId: typeId}});
+      this.$router.push("/goods");
     },
     intoAbout() {
       this.$router.push("/about");

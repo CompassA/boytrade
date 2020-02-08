@@ -3,7 +3,7 @@
     <div class="left_nav">
       <ul>
         <li @click="intoInfoEditor()">资料编辑</li>
-        <li>发布商品</li> 
+        <li @click="intoPublish()">发布商品</li> 
         <li @click="intoUserProduct()">商品管理</li>
         <li @click="intoOrder()">买方订单</li>
         <li @click="intoSellerOrder()">卖方订单</li>
@@ -27,6 +27,9 @@ export default {
     },
     intoSellerOrder() {
       this.$parent.$router.push("/about/seller_order");
+    },
+    intoPublish() {
+      this.$router.push("/about/publish");
     }
   }
 };
@@ -63,8 +66,9 @@ export default {
 }
 
 .right_block {
+  margin-left: 20px;
   width: 1200px;
-  height: 1150px;
+  height: 1500px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   left: 230px;
   top: 70px;

@@ -34,7 +34,12 @@ const routes = [
         path: '/about/seller_order',
         name: 'seller_order',
         component: () => import(/* webpackChunkName: order" */ '../views/SellerOrder.vue')
-      }
+      },
+      {
+        path: '/about/publish',
+        name: 'publish',
+        component: () => import(/* webpackChunkName: "publish" */ '../views/Publish.vue')
+      },
     ]
   },
   {
@@ -51,11 +56,6 @@ const routes = [
     path: '/favourites',
     name: 'favourites',
     component: () => import(/* webpackChunkName: "favourites" */ '../views/Favourites.vue')
-  },
-  {
-    path: '/publish',
-    name: 'publish',
-    component: () => import(/* webpackChunkName: "publish" */ '../views/Publish.vue')
   },
   {
     path: '/detail',

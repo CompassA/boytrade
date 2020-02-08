@@ -26,6 +26,7 @@ export default new Vuex.Store({
     },
     orderList: [],
     sellerOrderList: [],
+    addressInfoList: [],
     jsencrypt,
   },
   mutations: {
@@ -70,6 +71,9 @@ export default new Vuex.Store({
     },
     updateSellerButtonStatus(state, value) {
       state.sellerOrderButtionStatus = value;
+    },
+    updateAddressInfoList(state, value) {
+      state.addressInfoList = value;
     }
   },
   actions: {

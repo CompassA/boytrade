@@ -20,7 +20,7 @@
       <b-navbar-nav class="ml-auto">
         <div v-if="!this.isLogin">
           <b-button v-b-modal.login variant="light">登录</b-button>
-          <b-button v-b-modal.signup variant="light" @click="signup()">注册</b-button>
+          <b-button v-b-modal.signup variant="light">注册</b-button>
         </div>
         <div v-else>
           <b-nav small>
@@ -34,7 +34,6 @@
             </b-nav-item-dropdown>
             <b-nav-item @click="intoShoppingcart()">购物车</b-nav-item>
             <b-nav-item @click="intoFavourites()">收藏夹</b-nav-item>
-            <b-nav-item @click="intoPublish()">发布商品</b-nav-item>
           </b-nav>
         </div>
       </b-navbar-nav>
@@ -229,9 +228,6 @@ export default {
     },
     intoHome() {
       this.$router.push("/");
-    },
-    intoPublish() {
-      this.$router.push("/publish");
     },
     registry() {
       if (

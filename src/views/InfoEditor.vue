@@ -241,6 +241,9 @@ export default {
       });
     },
     deleteAddressInfo(addressInfoId, selected) {
+      if (!confirm("您确定要删除当前地址信息吗？")) {
+        return;
+      }
       this.$axios.delete("/address/delete", {
         body: "with body",
         params: {

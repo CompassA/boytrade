@@ -46,7 +46,10 @@ export default {
     },
     token: function() {
       return window.localStorage["token"];
-    }
+    },
+    userId: function() {
+      return this.$parent.$store.state.userinfo.userId;
+    },
   },
   methods: {
     pay(order) {
@@ -55,7 +58,12 @@ export default {
         key: this.$store.state.jsencrypt.encrypt(key),
         encryptData: utils.encrypt(JSON.stringify(order), key),
       }
-      this.$axios.post("/order/trade_pay?token=" + this.token, serverRequest).then(response => {
+      this.$axios.post("/order/trade_pay", serverRequest, {
+        params: {
+          userId: this.userId,
+          token: this.token,
+        }
+      }).then(response => {
         if (response.data.status === "success") {
           alert("支付成功");
           this.$store.commit("updateBuyerButtonStatus", 2);

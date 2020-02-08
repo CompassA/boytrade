@@ -28,6 +28,7 @@ export default new Vuex.Store({
     sellerOrderList: [],
     addressInfoList: [],
     jsencrypt,
+    defaultAddress: null,
   },
   mutations: {
     login(state, value) {
@@ -49,6 +50,11 @@ export default new Vuex.Store({
         userVO: null,
       };
       state.orderList = [];
+      state.defaultAddress = null;
+      state.sellerOrderButtionStatus = 1;
+      state.buyerOrderButtionStatus = 1;
+      state.addressInfoList = [];
+      state.sellerOrderList = [];
     },
     setPublicKey(state, value) {
       state.jsencrypt.setPublicKey(value.public_key);
@@ -74,6 +80,12 @@ export default new Vuex.Store({
     },
     updateAddressInfoList(state, value) {
       state.addressInfoList = value;
+    },
+    updateDefaultAddress(state, value) {
+      state.defaultAddress = value;     
+    },
+    updateCurrentOrder(state, value) {
+      state.currentOrder = value;
     }
   },
   actions: {

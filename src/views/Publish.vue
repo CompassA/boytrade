@@ -119,18 +119,21 @@ export default {
       }
       await this.upLoadImage();
 
-      this.$axios.put("/product/create?token=" + this.token, this.product)
-        .then(response => {
-          if (response.data.status === "success") {
-            alert("创建商品成功!");
-            this.$router.push("/about");
-          } else {
-            alert("商品创建失败!");
-          }
-        })
-        .catch(response => {
-          alert(response);
-        });
+      this.$axios.put("/product/create", this.product, {
+        params: {
+          token: this.token,
+          userId: this.userinfo,
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          alert("创建商品成功!");
+          this.$router.push("/about");
+        } else {
+          alert("商品创建失败!");
+        }
+      }).catch(response => {
+        alert(response);
+      });
     },
     onReset(evt) {
       evt.preventDefault();
@@ -154,7 +157,12 @@ export default {
       let imageData = new FormData();
       imageData.append("imgFile", this.product.imgFile);
       await this.$axios
-        .post("/file/upload?token="+this.token, imageData)
+        .post("/file/upload", imageData, {
+          params: {
+            token: this.token,
+            userId: this.userId,
+          }
+        })
         .then(response => {
           if (response.data.status === "success") {
             this.product.iconUrl = response.data.body;

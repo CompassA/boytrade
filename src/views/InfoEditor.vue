@@ -7,7 +7,7 @@
       <div v-for="addressInfo in this.addressInfoList" v-bind:key="addressInfo.infoId">
         <b-card
           :border-variant="addressInfo.selected === 1 ? 'dark' : 'light'"
-          :header="addressInfo.selected === 1 ? '默认地址' : '地址信息'"
+          :header="addressInfo.selected === 1 ? '当前收货地址' : '地址信息'"
           class="text-left"
           style="margin: 10px 10px 10px 10px"
         >
@@ -17,11 +17,11 @@
             <b>性别:  </b>{{addressInfo.gender === 1 ? "男": "女"}} 
             <b>手机号: </b> {{addressInfo.userPhone}}</b-card-text>
           <b-button variant="outline-dark" @click="updateCurrentAddressInfo(addressInfo)">编辑</b-button>
-          <b-button variant="outline-dark" @click="deleteAddressInfo(addressInfo.infoId)">删除</b-button>
+          <b-button variant="outline-dark" @click="deleteAddressInfo(addressInfo.infoId, addressInfo.selected)">删除</b-button>
           <b-button v-if="addressInfo.selected === 0" 
             variant="outline-dark" 
-            @click="setDefault(addressInfo.infoId)"
-          >设为默认地址</b-button>
+            @click="setDefault(addressInfo)"
+          >设为收货地址</b-button>
         </b-card>
         
       </div>
@@ -144,7 +144,6 @@ export default {
       });
   },
   methods: {
-    addNewInfo() {},
     onSubmit(evt) {
       evt.preventDefault();
       this.$axios.put("/address/insert", this.addressInfo, {
@@ -221,17 +220,19 @@ export default {
       this.editAddressInfo.gender = this.currentAddressInfo.gender;
       this.editAddressInfo.infoId = this.currentAddressInfo.infoId;
     },
-    setDefault(addressInfoId) {
+    setDefault(addressInfo) {
       this.$axios.post("/address/reset", {}, {
         params: {
           userId: this.userId,
-          infoId: addressInfoId,
+          infoId: addressInfo.infoId,
           token: this.token,
         }
       }).then(response => {
         if (response.data.status === "success") {
           this.$store.commit("updateAddressInfoList", response.data.body.userAddressInfo);
           alert("设置成功！");
+          addressInfo.selected = 1;
+          this.$store.commit("updateDefaultAddress", addressInfo);
         } else {
           alert(response.data.body.message);
         }
@@ -239,7 +240,7 @@ export default {
         alert(response);
       });
     },
-    deleteAddressInfo(addressInfoId) {
+    deleteAddressInfo(addressInfoId, selected) {
       this.$axios.delete("/address/delete", {
         body: "with body",
         params: {
@@ -251,6 +252,9 @@ export default {
         if (response.data.status === "success") {
           this.$store.commit("updateAddressInfoList", response.data.body.userAddressInfo);
           alert("删除成功！");
+          if (selected) {
+            this.$store.commit("updateDefaultAddress", null);
+          }
         } else {
           alert(response.data.body.message);
         }

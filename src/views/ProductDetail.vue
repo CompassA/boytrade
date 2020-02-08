@@ -72,6 +72,32 @@ export default {
     },
     token: function() {
       return window.localStorage["token"];
+    },
+    defaultAddress: function() {
+      return this.$store.state.defaultAddress;
+    },
+    userId: function() {
+      return this.$parent.$store.state.userinfo.userId;
+    },
+  },
+  created() {
+    if (this.defaultAddress === null) {
+      this.$axios.get("/address/default", {
+        params: {
+          userId: this.userId,
+          token: this.token,
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          this.$store.commit("updateDefaultAdress", response.data.body);
+        } else {
+          if (confirm("您尚未设置收货地址,是否立即去设置?")) {
+            this.$router.push("/about/info_editor");
+          }
+        }
+      }).catch(response => {
+        alert(response);
+      })
     }
   },
   methods: {
@@ -79,6 +105,10 @@ export default {
       this.$parent.$router.go(-1);
     },
     buyAtOnce() {
+      if (this.defaultAddress === null) {
+        alert("地址信息缺失");
+        return;
+      }
       if (this.amount > this.productDetail.productVO.stock || this.amount < 1) {
         alert("数量不合法！");
         return;
@@ -99,21 +129,29 @@ export default {
       });
       const orderDTO = {
         "userId": this.currentUserInfo.userId,
-        "userName": this.productDetail.userVO.name,
-        "userPhone": "",
-        "userAddress": "",
+        "userName": this.defaultAddress.userName,
+        "userPhone": this.defaultAddress.userPhone,
+        "userAddress": this.defaultAddress.userAddress,
         "productDetails": orderDetail,
       };
+      if (!confirm("您确定要下单吗?")) {
+        return;
+      }
       const key = utils.randomKey();
       const encryptData = utils.encrypt(JSON.stringify(orderDTO), key);
       const serverRequst = {
         key: this.$store.state.jsencrypt.encrypt(key),
         encryptData: encryptData
       };
-      this.$axios.post("/order/create?token=" + this.token, serverRequst).then(response => {
+      this.$axios.post("/order/create", serverRequst, {
+        params: {
+          userId: this.userId,
+          token: this.token,
+        }
+      }).then(response => {
         if (response.data.status === "success") {
-          alert("下单成功");
-          this.$store.state.currentOrder = response.data.body;
+          alert("下单成功!");
+          this.$store.commit("updateCurrentOrder", response.data.body);
           this.$router.push('/currentOrder');
         } else {
           alert(response.data.body.message + "\n错误码：" + response.data.body.errorCode);

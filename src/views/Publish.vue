@@ -122,7 +122,7 @@ export default {
       this.$axios.put("/product/create", this.product, {
         params: {
           token: this.token,
-          userId: this.userinfo,
+          userId: this.userId,
         }
       }).then(response => {
         if (response.data.status === "success") {

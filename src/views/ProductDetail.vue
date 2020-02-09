@@ -47,7 +47,7 @@
           </div>
           <div>
             <b-button variant="dark" @click="buyAtOnce()">立即购买</b-button>
-            <b-button variant="dark">加入购物车</b-button>
+            <b-button variant="dark" @click="addToCart()">加入购物车</b-button>
             <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
           </div>
         </div>
@@ -162,6 +162,31 @@ export default {
       .catch(response => {
         alert(response);
       });
+    },
+    addToCart() {
+      if (this.amount < 1) {
+        alert("请选择商品数量");
+        return;
+      }
+      const cartDTO = {
+        userId: this.userId,
+        productId: this.productDetail.productVO.productId,
+        num: this.amount,
+      };
+      this.$axios.post("/cart/add", cartDTO, {
+        params: {
+          token: this.token,
+          userId: this.userId,
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          alert("添加成功!");
+        } else {
+          alert(response.data.body.message);
+        }
+      }).catch(response => {
+        alert(response);
+      })
     }
   }
 };

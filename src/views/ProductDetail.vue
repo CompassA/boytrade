@@ -3,17 +3,19 @@
     <div class="detail">
       <div id="productImg">
         <div>
-          <img
-            style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
-            v-bind:src="productDetail.productVO.iconUrl"
-            width="400px"
-            height="400px"
-          />
-        </div>
-        <div style="border:2px; width: 400px; height: auto">
-          <p style="font-size: 18px;">商家描述：{{productDetail.productVO.description}}</p>
-          <p>发布者: {{productDetail.userVO.name}}</p>
-          <p>注册时间：{{productDetail.userVO.createTime}}</p>
+          <div style="float: none;">
+            <img
+              style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+              v-bind:src="productDetail.productVO.iconUrl"
+              width="400px"
+              height="400px"
+            />  
+          </div>
+          <div style="float: none;">
+            <p style="font-size: 18px;">商家描述：{{productDetail.productVO.description}}</p>
+            <p>发布者: {{productDetail.userVO.name}}</p>
+            <p>注册时间：{{productDetail.userVO.createTime}}</p>
+          </div>
         </div>
       </div>
       <div id="content">
@@ -89,7 +91,7 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$store.commit("updateDefaultAdress", response.data.body);
+          this.$store.commit("updateDefaultAddress", response.data.body);
         } else {
           if (confirm("您尚未设置收货地址,是否立即去设置?")) {
             this.$router.push("/about/info_editor");
@@ -174,8 +176,7 @@ export default {
   margin: 10px 20px 20px 10px;
   padding: 10px 10px 10px 10px;
   text-align: left;
-  width: 400px;
-  height: 400px;
+  height: auto;
   float: left;
 }
 </style>

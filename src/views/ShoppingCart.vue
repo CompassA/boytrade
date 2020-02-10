@@ -1,10 +1,12 @@
 <template>
   <div>
     <div v-for="cartView in cartViews" :key=cartView.sellerId>
-      <b-table :fields="fields" :items="cartView.cartDetails" caption-top>
-        <template v-slot:table-caption>卖家名称: {{ cartView.sellerName }}</template>
+      <hr style="height:3px;border:none;border-top:3px double red;" />
+      <b style="font-size: 20px; align: left;">卖家名称: {{ cartView.sellerName }}</b>
+      <b-table :fields="fields" :items="cartView.cartDetails" caption-top>  
         <template v-slot:cell(selected)="data">
            <b-form-checkbox
+            v-model="cartView.selectedIds"
             :value="data.item.productId"
             unchecked-value="not_accepted"
           ></b-form-checkbox>
@@ -19,22 +21,31 @@
         </template>
         
         <template v-slot:cell(sum)="data">
-          <b style="color: red;"> ￥{{ data.item.price * data.item.num }} </b>
+          <b style="color: red;"> ￥{{ Math.round(Math.round(data.item.price * 100) * data.item.num) / 100 }} </b>
         </template>
 
         <template v-slot:cell(ops)="data">
           <div class="ops"><p @click="addToFavourites(data)">加入收藏夹</p></div>
           <div class="ops"><p @click="deleteFromCart(data)">删除</p></div>
         </template>
-      </b-table>
-      <b-button-group >
-        <b-button>立即付款</b-button>
-      </b-button-group>
+      </b-table> 
+      <b-container>
+        <b-row>
+          <b-col md="5">
+            <p>总金额：<b style="color: red;"> ￥{{ totalMoney(cartView) }}</b></p>
+          </b-col>
+          <b-col md="7">
+            <b-button @click="pay(cartView)">立即下单</b-button>
+          </b-col>
+        </b-row>
+      </b-container>
     </div>
   </div>
 </template>
 
 <script>
+import utils from '../js/utils';
+
 export default {
   data() {
     return {
@@ -58,6 +69,9 @@ export default {
     userId: function() {
       return this.$parent.$store.state.userinfo.userId;
     },
+    addressInfo: function() {
+      return this.$parent.$store.state.defaultAddress;
+    }   
   },
   created() {
     this.$axios.get("/cart/get", {
@@ -70,13 +84,95 @@ export default {
       if (response.data.status === "success") {
         this.cartViews = response.data.body;
       } else {
-        this.alert(response.data.body.message);
+        alert(response.data.body.message);
       }
     }).catch(response => {
       alert(response);
     });
+    if (this.addressInfo === null) {
+      this.$axios.get("/address/default", {
+        params: {
+          userId: this.userId,
+          token: this.token,
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          this.$store.commit("updateDefaultAddress", response.data.body);
+        } else {
+          if (confirm("您尚未设置收货地址,是否立即去设置?")) {
+            this.$router.push("/about/info_editor");
+          }
+        }
+      }).catch(response => {
+        alert(response);
+      })
+    }
   },
   methods: {
+    totalMoney(cartView) {
+      const priceMap = new Map();
+      cartView.cartDetails.forEach(detail => priceMap.set(
+        detail.productId, detail.num * Math.round(detail.price * 100)));
+      var sum = 0;
+      cartView.selectedIds.forEach(id => sum += priceMap.get(id));
+      return Math.round(sum) / 100.0;
+    },
+    pay(cartView) {
+      if (!confirm("您确定要下单吗?")) {
+        return;
+      }
+      if (this.addressInfo === null) {
+        if (confirm("您尚未设置收货地址,是否立即去设置?")) {
+          this.$router.push("/about/info_editor");
+        }
+        return;
+      }
+      const detailMap = new Map();
+      cartView.cartDetails.forEach(detail => detailMap.set(detail.productId, detail));
+      const orderDetails = new Array();
+      cartView.selectedIds.forEach(id => {
+        const cartDetail = detailMap.get(id);
+        orderDetails.push({
+          productId: id,
+          ownerId: cartView.sellerId,
+          productName: cartDetail.productName,
+          productAmount: cartDetail.num,
+          productPrice: cartDetail.price,
+          iconUrl: cartDetail.iconUrl,
+        })
+      });
+      const orderDTO = {
+        userId: this.userId,
+        userName: this.addressInfo.userName,
+        userPhone: this.addressInfo.userPhone,
+        userAddress: this.addressInfo.userAddress,
+        productDetails: orderDetails,
+      }
+
+      const key = utils.randomKey();
+      const encryptData = utils.encrypt(JSON.stringify(orderDTO), key);
+      const serverRequst = {
+        key: this.$store.state.jsencrypt.encrypt(key),
+        encryptData: encryptData
+      };
+      this.$axios.post("/order/create", serverRequst, {
+        params: {
+          userId: this.userId,
+          token: this.token,
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          alert("下单成功!");
+          this.$store.commit("updateCurrentOrder", response.data.body);
+          this.$router.push('/currentOrder');
+        } else {
+          alert(response.data.body.message + "\n错误码：" + response.data.body.errorCode);
+        }
+      })
+      .catch(response => {
+        alert(response);
+      });
+    },
     deleteFromCart(data) {
       if (!confirm("确实要将此商品从购物车中删除吗?")) {
         return;

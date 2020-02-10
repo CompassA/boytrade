@@ -2,7 +2,7 @@
   <div>
     <div class="order_model">
       <p>订单编号: {{order.orderId}}</p>
-      <p>订单总金额: {{order.orderAmount}}</p>
+      <p>订单总金额: <b style="color: red;">￥{{order.orderAmount}}</b></p>
       <p>创建时间: {{order.createTime}}</p>
       <p>买家姓名: {{order.userName}}</p>
       <p>手机号码: {{order.userPhone}}</p>
@@ -17,6 +17,9 @@
       >
         <template v-slot:cell(iconUrl)="data">
           <img v-bind:src="data.item.iconUrl" style="width: 70px; height: 70px;" />
+        </template>
+        <template v-slot:cell(sum)="data">
+          <b style="color: red;">￥{{ Math.round(Math.round(data.item.price * 100) * data.item.productAmount) / 100}}</b>
         </template>
       </b-table>
       <b-button variant="outline-dark" @click="pay(order)">立即付款</b-button>
@@ -35,6 +38,7 @@ export default {
         { key: "productName", label: "商品名称" },
         { key: "productAmount", label: "数量" },
         { key: "productPrice", label: "单价" },
+        { key: "sum", label: "总价" },
         { key: "iconUrl", label: "图片" }
       ]
     }

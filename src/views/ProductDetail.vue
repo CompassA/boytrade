@@ -119,7 +119,9 @@ export default {
         alert("您不能购买自己发布的商品！");
         return;
       }
-      
+      if (!confirm("您确定要下单吗?")) {
+        return;
+      }
       const orderDetail = new Array();
       orderDetail.push({
         "ownerId": this.productDetail.productVO.userId,
@@ -136,9 +138,6 @@ export default {
         "userAddress": this.defaultAddress.userAddress,
         "productDetails": orderDetail,
       };
-      if (!confirm("您确定要下单吗?")) {
-        return;
-      }
       const key = utils.randomKey();
       const encryptData = utils.encrypt(JSON.stringify(orderDTO), key);
       const serverRequst = {

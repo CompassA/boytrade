@@ -36,6 +36,7 @@
           </b-col>
           <b-col md="7">
             <b-button @click="pay(cartView)">立即下单</b-button>
+            <b-button @click="deleteCart(cartView)">删除</b-button>
           </b-col>
         </b-row>
       </b-container>
@@ -164,6 +165,13 @@ export default {
         if (response.data.status === "success") {
           alert("下单成功!");
           this.$store.commit("updateCurrentOrder", response.data.body);
+          this.$axios.delete("/cart/delete_all", {
+            body: cartView.selectedIds,
+            params: {
+              userId: this.userId,
+              token: this.token,
+            }
+          });
           this.$router.push('/currentOrder');
         } else {
           alert(response.data.body.message + "\n错误码：" + response.data.body.errorCode);
@@ -200,6 +208,26 @@ export default {
     },
     addToFavourites(data) {
       alert(JSON.stringify(data));
+    },
+    deleteCart(cartView) {
+      if (!confirm("您确定要删除该商家的所有商品吗?")) {
+        return;
+      }
+      this.$axios.delete("/cart/delete_all", {
+        data: cartView.selectedIds,
+        params: {
+          userId: this.userId,
+          token: this.token,
+        }
+      }).then(response => {
+        if (response.data.status === "success") {
+          this.$router.go(0);
+        } else {
+          alert(response.data.body.message);
+        }
+      }).catch(response => {
+        alert(response);
+      });
     }
   },
 }

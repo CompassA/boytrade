@@ -166,13 +166,18 @@ export default {
           alert("下单成功!");
           this.$store.commit("updateCurrentOrder", response.data.body);
           this.$axios.delete("/cart/delete_all", {
-            body: cartView.selectedIds,
+            data: JSON.stringify(cartView.selectedIds),
             params: {
               userId: this.userId,
               token: this.token,
             }
+          }).then(response => {
+            if (response.data.status === "success") {
+              this.$router.push('/currentOrder');
+            } else {
+              alert(response.data.body.message);
+            }
           });
-          this.$router.push('/currentOrder');
         } else {
           alert(response.data.body.message + "\n错误码：" + response.data.body.errorCode);
         }

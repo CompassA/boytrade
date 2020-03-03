@@ -19,7 +19,7 @@
           <img v-bind:src="data.item.iconUrl" style="width: 70px; height: 70px;" />
         </template>
         <template v-slot:cell(sum)="data">
-          <b style="color: red;">￥{{ Math.round(Math.round(data.item.price * 100) * data.item.productAmount) / 100}}</b>
+          <b style="color: red;">￥{{ Math.round(Math.round(data.item.productPrice * 100) * data.item.productAmount) / 100 }}</b>
         </template>
       </b-table>
       <b-button variant="outline-dark" @click="pay(order)">立即付款</b-button>

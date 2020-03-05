@@ -163,8 +163,12 @@ export default {
       });
     },
     addToCart() {
-      if (this.amount < 1) {
-        alert("请选择商品数量");
+      if (this.amount > this.productDetail.productVO.stock || this.amount < 1) {
+        alert("数量不合法！");
+        return;
+      }
+      if (this.productDetail.productVO.userId === this.currentUserInfo.userId) {
+        alert("您不能购买自己发布的商品！");
         return;
       }
       const cartDTO = {

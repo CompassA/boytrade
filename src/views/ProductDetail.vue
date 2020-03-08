@@ -45,9 +45,12 @@
             库存：
             <b>{{productDetail.productVO.stock}}</b>
           </div>
+          <div v-if="productDetail.productVO.payStatus !== 0">
+            <b style="color: red;">商品已售罄</b>
+          </div>
           <div>
-            <b-button variant="dark" @click="buyAtOnce()">立即购买</b-button>
-            <b-button variant="dark" @click="addToCart()">加入购物车</b-button>
+            <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="buyAtOnce()">立即购买</b-button>
+            <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="addToCart()">加入购物车</b-button>
             <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
           </div>
         </div>

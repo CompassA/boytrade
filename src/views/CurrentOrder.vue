@@ -61,19 +61,15 @@ export default {
         key: this.$store.state.jsencrypt.encrypt(key),
         encryptData: utils.encrypt(JSON.stringify(order), key),
       }
-      this.$axios.post("/order/trade_pay", serverRequest, {
+      this.$axios.post("/trade/pay", serverRequest, {
         params: {
           userId: this.userId,
           token: this.token,
         }
       }).then(response => {
-        if (response.data.status === "success") {
-          alert("支付成功");
-          this.$store.commit("updateBuyerButtonStatus", 2);
-          this.$router.push("/about/order");
-        } else {
-          alert(response.data.body.message);
-        }
+        var newwindow = window.open("#","_blank");
+        newwindow.document.write(response.data);
+        this.$router.push("/");
       }).catch(response => {
         alert(response);
       });

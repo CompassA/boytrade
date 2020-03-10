@@ -13,6 +13,7 @@
       <p>买家姓名: {{order.userName}}</p>
       <p>手机号码: {{order.userPhone}}</p>
       <p>联系地址: {{order.userAddress}}</p>
+      <p v-if="selectButtonStatus === 1">{{order.leftTimeInfo}}</p>
       <p>订单详情：</p>
       <b-table
         sticky-header
@@ -30,8 +31,8 @@
         </template>
       </b-table>
       <div v-if="selectButtonStatus === 1">
-        <b-button variant="outline-dark" @click="pay(order)">立即付款</b-button>
-        <b-button variant="outline-dark" @click="cancel(order)">取消订单</b-button>
+        <b-button :disabled="order.leftTimeInfo === ''" variant="outline-dark" @click="pay(order)">立即付款</b-button>
+        <b-button :disabled="order.leftTimeInfo === ''" variant="outline-dark" @click="cancel(order)">取消订单</b-button>
       </div>
       <div v-else-if="selectButtonStatus === 2">
 
@@ -49,18 +50,12 @@
 <script>
 export default {
   computed: {
-    orderList: function() {
-      return this.$parent.$store.state.orderList;
-    },
     token: function() {
       return window.localStorage["token"];
     },
     userId: function() {
       return this.$parent.$store.state.userinfo.userId;
     },
-    selectButtonStatus: function() {
-      return this.$parent.$store.state.buyerOrderButtionStatus;
-    }
   },
   data() {
     return {
@@ -70,7 +65,9 @@ export default {
         { key: "productPrice", label: "单价" },
         { key: "sum", label: "总价" },
         { key: "iconUrl", label: "图片" }
-      ]
+      ],
+      selectButtonStatus: 1,
+      orderList: [],
     };
   },
   methods: {
@@ -125,8 +122,22 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$store.commit("updateBuyerButtonStatus", 1);
-          this.$store.commit("updateOrderList", response.data.body);
+          setInterval(() => {
+            for (let i = 0; i < response.data.body.length; ++i) {
+              let orderVO = response.data.body[i];
+              let begin = new Date().getTime();
+              let end = new Date(orderVO.expireTime).getTime();
+              if (end - begin > 0) {
+                let leftSeconds = (end - begin) / 1000;
+                let hours = Math.floor(leftSeconds / 3600);
+                let minutes = Math.floor(leftSeconds % 3600 / 60);
+                let seconds = Math.floor(leftSeconds % 3600 % 60);
+                orderVO.leftTimeInfo = "剩余时间: " + hours + ":" + minutes + ":" + seconds;
+              }
+            }
+          }, 1000);
+          this.selectButtonStatus = 1;
+          this.orderList = response.data.body;
         } else {
           alert(response.data.body.message);
         }
@@ -141,8 +152,8 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$store.commit("updateBuyerButtonStatus", 2);
-          this.$store.commit("updateOrderList", response.data.body);
+          this.selectButtonStatus = 2;
+          this.orderList = response.data.body;
         } else {
           alert(response.data.body.message);
         }
@@ -157,8 +168,8 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$store.commit("updateBuyerButtonStatus", 3);
-          this.$store.commit("updateOrderList", response.data.body);
+          this.selectButtonStatus = 3;
+          this.orderList = response.data.body;
         } else {
           alert(response.data.body.message);
         }
@@ -173,8 +184,8 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$store.commit("updateBuyerButtonStatus", 4);
-          this.$store.commit("updateOrderList", response.data.body);
+          this.selectButtonStatus = 4;
+          this.orderList = response.data.body;
         } else {
           alert(response.data.body.message);
         }
@@ -182,20 +193,8 @@ export default {
     },
   },
   created() {
-    switch(this.selectButtonStatus) {
-      case 1:
-        this.getCreatedOrders();
-        break;
-      case 2:
-        this.getPaidOrders();
-        break;
-      case 3:
-        this.getSentOrders();
-        break;
-      case 4:
-        this.getFinishedOrders();
-        break;
-    }
+    this.selectButtonStatus = 1;
+    this.getCreatedOrders();
   }
 };
 </script>

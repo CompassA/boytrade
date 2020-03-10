@@ -10,7 +10,6 @@ export default new Vuex.Store({
   state: {
     base64,
     sellerOrderButtionStatus: 1,
-    buyerOrderButtionStatus: 1,
     userinfo: {
       userId: -1,
       name: "",

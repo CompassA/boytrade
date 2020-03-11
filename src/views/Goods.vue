@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="lists">
+    <div class="lists">
       <div class="cardBox" v-for="product in products" v-bind:key="product.productId">
         <div class="bodyBox">
           <img
@@ -11,22 +11,45 @@
           <dl>
             <dt>商品名：{{ product.productName }}</dt>
             <dd>简介： {{ product.description.substring(0, 10) + (product.description.length > 10 ? "....": "") }}</dd>
-            <dd>价格：<b>{{ product.price }}</b>元</dd>
-            <dd>库存：<b>{{ product.stock }}</b>件</dd>
+            <dd>类别： {{ getCategory(product.categoryId) }} </dd>
           </dl>
           <b-button variant="dark" @click="intoProductDetail(product)">查看详情</b-button>
         </div>
       </div>
+    </div>
+    <div class="block">
+      <b-pagination v-model="currentPage" total-rows="10000000" 
+        per-page="12" hide-goto-end-buttons="true" size="lg" first-number
+        @change="changeEvent()" @input="inputEvent()">
+      </b-pagination>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      prePageNo: 1,
+      currentPage: 1,
+      lastProductId: 0,
+      products: [],
+    }
+  },
   created() {
-    this.$axios.get("/product/info", { params: {typeId: 1}}).then(response => {
+    const requestParams = {
+      "prePage": 0,
+      "targetPage": 1,
+      "preLastId": 0,
+    };
+    this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
-          this.$store.commit("updateProductList", response.data.body);
+          this.products = response.data.body.views;
+          if (this.products.length > 0) {
+            this.lastProductId = this.products[this.products.length - 1].productId;
+          } else {
+            this.lastProductId = 0;
+          }
         } else {
           alert(response.data.body.message);
         }
@@ -35,12 +58,32 @@ export default {
         return false;
       });
   },
-  computed: {
-    products: function() {
-      return this.$parent.$store.state.productList;
-    }
-  },
   methods: {
+    changeEvent() {
+      this.prePageNo = this.currentPage;
+    },
+    inputEvent() {
+      //获取这一页、前一页、前一页最后一个商品id
+      const passPreLastId = (this.currentPage <= this.prePageNo) ? 0 : this.preLastId;
+      const requestParams = {
+        "prePage": this.prePageNo,
+        "targetPage": this.currentPage,
+        "preLastId": 0,
+      };
+      this.$axios.get("/product/page", { params: requestParams }).then(response => {
+        if (response.data.status === "success") {
+          this.products = response.data.body.views;
+          //更新前一页最后商品id
+          if (this.products.length > 0) {
+            this.lastProductId = this.products[this.products.length - 1].productId;
+          } else {
+            this.lastProductId = 0;
+          }
+        } else {
+          alert(response.data.body.message);
+        }
+      });
+    },
     async intoProductDetail(productVO) {
       var productDetail = {};
       await this.$axios.get("/product/detail", {
@@ -77,11 +120,39 @@ export default {
           alert(response);
         });
     },
+    getCategory(id) {
+      switch (id) {
+        case 1: 
+          return "书本";
+        case 2:
+          return "资料";
+        case 3: 
+          return "电器";
+        case 4:
+          return "宿舍用品";
+        case 5:
+          return "化妆品";
+        case 6:
+          return "其他";
+        default:
+          return "未定义";
+      }
+    },
   }
 };
 </script>
 
 <style lang="scss">
+.lists {
+  height: 600px;
+}
+
+.block {
+  margin-top: 1%;
+  margin-left: 35%;
+  float: left;
+}
+
 .cardBox {
   width: 230px;
   height: 340px;

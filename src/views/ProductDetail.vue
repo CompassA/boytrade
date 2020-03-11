@@ -15,6 +15,7 @@
             <p style="font-size: 18px;">商家描述：{{productDetail.productVO.description}}</p>
             <p>发布者: {{productDetail.userVO.name}}</p>
             <p>注册时间：{{productDetail.userVO.createTime}}</p>
+            <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
           </div>
         </div>
       </div>
@@ -23,11 +24,18 @@
           <p style="font-size: 30px; text-align: center;">
             <b>商品名： {{productDetail.productVO.productName}}</b>
           </p>
-          <p style="font-size: 13px; margin-left: 25px; margin-right: 20px;">
+          <p style="font-size: 15px; margin-left: 25px; margin-right: 20px;">
             价格：
             <b style="color: red; font-size: 30px;">{{productDetail.productVO.price}}</b>
             元
-            销量：{{productDetail.productVO.sales}}件
+
+            销量：
+            <b style="font-size: 20px;">{{productDetail.productVO.sales}}</b>
+            件
+
+            已付款: 
+            <b style="font-size: 20px;">{{productDetail.productVO.paidNum}}</b>
+             件
           </p>
           <div style="height: 20px; margin-left: 15px; font-size: 15px;">
             数量
@@ -48,11 +56,10 @@
           <div v-if="productDetail.productVO.payStatus !== 0">
             <b style="color: red;">商品已售罄</b>
           </div>
-          <div>
-            <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="buyAtOnce()">立即购买</b-button>
-            <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="addToCart()">加入购物车</b-button>
-            <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
-          </div>
+        </div>
+        <div style="float: none; margin-left: 10%;">
+          <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="buyAtOnce()">立即购买</b-button>
+          <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="addToCart()">加入购物车</b-button>
         </div>
       </div>
     </div>

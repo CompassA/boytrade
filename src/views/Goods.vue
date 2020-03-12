@@ -64,11 +64,11 @@ export default {
     },
     inputEvent() {
       //获取这一页、前一页、前一页最后一个商品id
-      const passPreLastId = (this.currentPage <= this.prePageNo) ? 0 : this.preLastId;
+      const passPreLastId = (this.currentPage <= this.prePageNo) ? 0 : this.lastProductId;
       const requestParams = {
         "prePage": this.prePageNo,
         "targetPage": this.currentPage,
-        "preLastId": 0,
+        "preLastId": passPreLastId,
       };
       this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
@@ -122,18 +122,22 @@ export default {
     },
     getCategory(id) {
       switch (id) {
-        case 1: 
-          return "书本";
-        case 2:
-          return "资料";
-        case 3: 
-          return "电器";
-        case 4:
-          return "宿舍用品";
-        case 5:
-          return "化妆品";
-        case 6:
+        case 0:
           return "其他";
+        case 1: 
+          return "书本资料";
+        case 2: 
+          return "电器";
+        case 3:
+          return "生活用品";
+        case 4:
+          return "化妆品";
+        case 5:
+          return "衣物";
+        case 6:
+          return "鞋子";
+        case 7:
+          return "游戏/玩具";
         default:
           return "未定义";
       }
@@ -144,7 +148,7 @@ export default {
 
 <style lang="scss">
 .lists {
-  height: 600px;
+  height: 750px;
 }
 
 .block {

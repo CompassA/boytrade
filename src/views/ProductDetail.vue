@@ -12,7 +12,6 @@
             />  
           </div>
           <div style="float: none;">
-            <p style="font-size: 18px;">商家描述：{{productDetail.productVO.description}}</p>
             <p>发布者: {{productDetail.userVO.name}}</p>
             <p>注册时间：{{productDetail.userVO.createTime}}</p>
             <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
@@ -24,6 +23,7 @@
           <p style="font-size: 30px; text-align: center;">
             <b>商品名： {{productDetail.productVO.productName}}</b>
           </p>
+          <p style="font-size: 15px; text-align: center;">商家描述：{{productDetail.productVO.description}}</p>
           <p style="font-size: 15px; margin-left: 25px; margin-right: 20px;">
             价格：
             <b style="color: red; font-size: 30px;">{{productDetail.productVO.price}}</b>

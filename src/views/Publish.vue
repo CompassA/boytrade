@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin: 2% 20% 10% 10%;">
     <b-form @submit="onSubmit" @reset="onReset" enctype="multipart/form-data" v-if="show">
       <b-form-group id="productName" label="商品名称" label-for="txtProductName">
         <b-form-input id="txtProductName" v-model="product.productName" required placeholder="请输入商品名称"></b-form-input>
@@ -86,12 +86,14 @@ export default {
         userId: -1,
       },
       categories: [
-        { text: "书本", value: 1 },
-        { text: "资料", value: 2 },
-        { text: "电器", value: 3 },
-        { text: "宿舍用品", value: 4 },
-        { text: "化妆品", value: 5 },
-        { text: "其他", value: 6 }
+        { text: "书本资料", value: 1 },
+        { text: "电器", value: 2 },
+        { text: "生活用品", value: 3 },
+        { text: "化妆品", value: 4 },
+        { text: "衣物", value: 5 },
+        { text: "鞋子", value: 6 },
+        { text: "游戏/玩具", value: 7 },
+        { text: "其他", value: 0 }
       ],
       show: true
     };
@@ -107,6 +109,9 @@ export default {
   methods: {
     async onSubmit(evt) {
       evt.preventDefault();
+      if (!confirm("信息是否已填写无误？")) {
+        return;
+      }
       if (this.product.imgFile.size  > 2 * 1024 * 1024) {
         alert("上传的图片不能大于2M！");
         return;
@@ -137,7 +142,6 @@ export default {
     },
     onReset(evt) {
       evt.preventDefault();
-      // Reset our form values
       this.product.description = "";
       this.product.name = "";
       this.product.category = null;

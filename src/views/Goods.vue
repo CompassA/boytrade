@@ -56,7 +56,6 @@ export default {
       "prePage": 0,
       "targetPage": 1,
       "preLastId": 0,
-      "typeId": -1,
     };
     this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
@@ -85,8 +84,10 @@ export default {
         "prePage": this.prePageNo,
         "targetPage": this.currentPage,
         "preLastId": passPreLastId,
-        "typeId": this.currentTypeId,
       };
+      if (this.currentTypeId !== -1) {
+        requestParams.typeId = this.currentTypeId;
+      }
       this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
           this.products = response.data.body.views;
@@ -169,8 +170,10 @@ export default {
         "prePage": 0,
         "targetPage": 1,
         "preLastId": 0,
-        "typeId": typeId,
       };
+      if (this.currentTypeId !== -1) {
+        requestParams.typeId = this.currentTypeId;
+      }
       this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
           this.products = response.data.body.views;

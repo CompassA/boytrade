@@ -1,5 +1,18 @@
 <template>
   <div>
+    <div>
+      <b-dropdown id="type-dropdown" :text="dropMainText" style="margin-right: 80%">
+        <b-dropdown-item @click="getTypeList(-1)">全部</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(7)">游戏/玩具</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(6)">鞋子</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(5)">衣物</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(4)">化妆品</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(3)">生活用品</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(2)">电器</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(1)">书本资料</b-dropdown-item>
+        <b-dropdown-item @click="getTypeList(0)">其他</b-dropdown-item>
+      </b-dropdown>
+    </div>
     <div class="lists">
       <div class="cardBox" v-for="product in products" v-bind:key="product.productId">
         <div class="bodyBox">
@@ -34,6 +47,8 @@ export default {
       currentPage: 1,
       lastProductId: 0,
       products: [],
+      currentTypeId: -1,
+      dropMainText: "全部"
     }
   },
   created() {
@@ -41,6 +56,7 @@ export default {
       "prePage": 0,
       "targetPage": 1,
       "preLastId": 0,
+      "typeId": -1,
     };
     this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
@@ -69,6 +85,7 @@ export default {
         "prePage": this.prePageNo,
         "targetPage": this.currentPage,
         "preLastId": passPreLastId,
+        "typeId": this.currentTypeId,
       };
       this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
@@ -122,6 +139,8 @@ export default {
     },
     getCategory(id) {
       switch (id) {
+        case -1:
+          return "全部";
         case 0:
           return "其他";
         case 1: 
@@ -142,6 +161,30 @@ export default {
           return "未定义";
       }
     },
+    //改变类别状态，获取类别第一页数据，更新lastId，页码数据
+    getTypeList(typeId) {
+      this.dropMainText = this.getCategory(typeId);
+      this.currentTypeId = typeId;
+      const requestParams = {
+        "prePage": 0,
+        "targetPage": 1,
+        "preLastId": 0,
+        "typeId": typeId,
+      };
+      this.$axios.get("/product/page", { params: requestParams }).then(response => {
+        if (response.data.status === "success") {
+          this.products = response.data.body.views;
+          if (this.products.length > 0) {
+            this.lastProductId = this.products[this.products.length - 1].productId;
+          } else {
+            this.lastProductId = 0;
+          }
+        } else {
+          alert(response.data.body.message);
+        }
+      });
+      this.currentPage = 1;
+    }
   }
 };
 </script>

@@ -1,15 +1,9 @@
 <template>
   <div id="app">
     <b-navbar type="light" variant="light">
-      <b-navbar-brand>校园二手物品交易平台</b-navbar-brand>
-      <b-navbar-nav tabs class="ml-auto">
-        <b-nav-item @click="intoHome()">首页</b-nav-item>
-        <b-nav-item @click="intoGoods(-1)">全部商品</b-nav-item>
-        <b-nav-item @click="intoGoods(-1)">书本</b-nav-item>
-        <b-nav-item @click="intoGoods(-1)">资料</b-nav-item>
-        <b-nav-item @click="intoGoods(-1)">电器</b-nav-item>
-        <b-nav-item @click="intoGoods(-1)">宿舍用品</b-nav-item>
-        <b-nav-item @click="intoGoods(-1)">化妆品</b-nav-item>
+      <b-navbar-brand href="#" @click="intoHome()">校园物品交易平台</b-navbar-brand>
+      <b-navbar-nav tabs class="mr-auto">
+        <b-nav-item @click="intoGoods()">全部商品</b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
         <b-nav-form>
@@ -220,7 +214,7 @@ export default {
     intoFavourites() {
       this.$router.push("/favourites");
     },
-    intoGoods(typeId) {
+    intoGoods() {
       this.$router.push("/goods");
     },
     intoAbout() {

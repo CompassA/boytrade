@@ -93,6 +93,10 @@ export default {
     },
   },
   created() {
+    if (this.userId === -1) {
+      alert("请登录");
+      return;
+    }
     if (this.defaultAddress === null) {
       this.$axios.get("/address/default", {
         params: {

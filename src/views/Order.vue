@@ -122,9 +122,10 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          setInterval(() => {
-            for (let i = 0; i < response.data.body.length; ++i) {
-              let orderVO = response.data.body[i];
+          const orderList = response.data.body;
+          function intervalTask() {
+            for (let i = 0; i < orderList.length; ++i) {
+              let orderVO = orderList[i];
               let begin = new Date().getTime();
               let end = new Date(orderVO.expireTime).getTime();
               if (end - begin > 0) {
@@ -135,9 +136,11 @@ export default {
                 orderVO.leftTimeInfo = "剩余时间: " + hours + ":" + minutes + ":" + seconds;
               }
             }
-          }, 1000);
+          }
+          intervalTask();
+          setInterval(intervalTask, 1000);
           this.selectButtonStatus = 1;
-          this.orderList = response.data.body;
+          this.orderList = orderList;
         } else {
           alert(response.data.body.message);
         }

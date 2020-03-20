@@ -14,10 +14,10 @@
               <b-button variant="info" @click="intoUserProduct()">商品管理</b-button>
             </div>
             <div>
-              <b-button variant="info" @click="intoOrder()">买方订单</b-button>
+              <b-button variant="info" @click="intoOrder()">我买到的</b-button>
             </div>
             <div>
-              <b-button variant="info" @click="intoSellerOrder()">卖方订单</b-button>
+              <b-button variant="info" @click="intoSellerOrder()">我卖出的</b-button>
             </div>
           </div>
         </b-col>

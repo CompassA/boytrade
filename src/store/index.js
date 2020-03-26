@@ -18,10 +18,6 @@ export default new Vuex.Store({
     },
     isLogin: false,
     currentOrder: null,
-    productDetail: {
-      productVO: null,
-      userVO: null,
-    },
     orderList: [],
     sellerOrderList: [],
     addressInfoList: [],
@@ -43,10 +39,6 @@ export default new Vuex.Store({
       };
       state.productList = [];
       state.currentOrder = null;
-      state.productDetail = {
-        productVO: null,
-        userVO: null,
-      };
       state.orderList = [];
       state.defaultAddress = null;
       state.sellerOrderButtionStatus = 1;
@@ -56,10 +48,6 @@ export default new Vuex.Store({
     },
     setPublicKey(state, value) {
       state.jsencrypt.setPublicKey(value.public_key);
-    },
-    updateProductDetail(state, value) {
-      state.productDetail.productVO = value.productVO;
-      state.productDetail.userVO = value.userVO;
     },
     updateOrderList(state, value) {
       state.orderList = value;
@@ -78,7 +66,7 @@ export default new Vuex.Store({
     },
     updateCurrentOrder(state, value) {
       state.currentOrder = value;
-    }
+    },
   },
   actions: {
   },

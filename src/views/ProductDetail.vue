@@ -1,19 +1,22 @@
 <template>
   <div>
-    <div class="detail">
+    <div v-if="productDetails === null">
+      <b-spinner class="m-5" label="Busy"></b-spinner>
+    </div>
+    <div v-else class="detail">
       <div id="productImg">
         <div>
           <div style="float: none;">
             <img
               style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
-              v-bind:src="productDetail.productVO.iconUrl"
+              v-bind:src="productDetails.iconUrl"
               width="400px"
               height="400px"
             />  
           </div>
           <div style="float: none;">
-            <p>发布者: {{productDetail.userVO.name}}</p>
-            <p>注册时间：{{productDetail.userVO.createTime}}</p>
+            <p>发布者: {{sellerVO.name}}</p>
+            <p>注册时间：{{sellerVO.createTime}}</p>
             <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
           </div>
         </div>
@@ -21,20 +24,20 @@
       <div id="content">
         <div style="margin: 50px 10px 10px 10px;">
           <p style="font-size: 30px; text-align: center;">
-            <b>商品名： {{productDetail.productVO.productName}}</b>
+            <b>商品名： {{productDetails.productName}}</b>
           </p>
-          <p style="font-size: 15px; text-align: center;">商家描述：{{productDetail.productVO.description}}</p>
+          <p style="font-size: 15px; text-align: center;">商家描述：{{productDetails.description}}</p>
           <p style="font-size: 15px; margin-left: 25px; margin-right: 20px;">
             价格：
-            <b style="color: red; font-size: 30px;">{{productDetail.productVO.price}}</b>
+            <b style="color: red; font-size: 30px;">{{productDetails.price}}</b>
             元
 
             销量：
-            <b style="font-size: 20px;">{{productDetail.productVO.sales}}</b>
+            <b style="font-size: 20px;">{{productDetails.sales}}</b>
             件
 
             已付款: 
-            <b style="font-size: 20px;">{{productDetail.productVO.paidNum}}</b>
+            <b style="font-size: 20px;">{{productDetails.paidNum}}</b>
              件
           </p>
           <div style="height: 20px; margin-left: 15px; font-size: 15px;">
@@ -43,7 +46,7 @@
               style="margin-right: 20px;"
               type="number"
               id="txtStock"
-              v-bind:max="productDetail.productVO.stock"
+              v-bind:max="productDetails.stock"
               min="0"
               maxlength="6"
               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
@@ -51,15 +54,15 @@
               v-model="amount"
             />
             库存：
-            <b>{{productDetail.productVO.stock}}</b>
+            <b>{{productDetails.stock}}</b>
           </div>
-          <div v-if="productDetail.productVO.payStatus !== 0">
+          <div v-if="productDetails.payStatus !== 0">
             <b style="color: red;">商品已售罄</b>
           </div>
         </div>
         <div style="float: none; margin-left: 10%;">
-          <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="buyAtOnce()">立即购买</b-button>
-          <b-button :disabled="productDetail.productVO.payStatus !== 0 ? true : false" pill variant="primary" @click="addToCart()">加入购物车</b-button>
+          <b-button :disabled="productDetails.payStatus !== 0 ? true : false" pill variant="primary" @click="buyAtOnce()">立即购买</b-button>
+          <b-button :disabled="productDetails.payStatus !== 0 ? true : false" pill variant="primary" @click="addToCart()">加入购物车</b-button>
         </div>
       </div>
     </div>
@@ -72,13 +75,12 @@ import utils from "../js/utils.js";
 export default {
   data() {
     return {
-      amount: 0
-    };
+      productDetails: null,
+      sellerVO: null,
+      amount: 0,
+    }
   },
   computed: {
-    productDetail: function() {
-      return this.$parent.$store.state.productDetail;
-    },
     currentUserInfo: function() {
       return this.$parent.$store.state.userinfo;
     },
@@ -92,12 +94,32 @@ export default {
       return this.$parent.$store.state.userinfo.userId;
     },
   },
-  created() {
-    if (this.userId === -1) {
-      alert("请登录");
-      return;
-    }
-    if (this.defaultAddress === null) {
+  async created() {
+    await this.$axios.get("/product/detail", {
+      params: {
+        productId: this.$route.params.id,
+      }
+    }).then(response => {
+      if (response.data.status === "success") {
+        this.productDetails = response.data.body;
+      }
+    }).catch(response => {
+      alert(response);
+    });
+
+    this.$axios.get("/user/part_info", {
+      params: {
+        userId: this.productDetails.userId,
+      }
+    }).then(response => {
+      if (response.data.status === "success") {
+        this.sellerVO = response.data.body;
+      }
+    }).catch(response => {
+      alert(response);
+    });
+    
+    if (this.defaultAddress === null && this.userId != -1) {
       this.$axios.get("/address/default", {
         params: {
           userId: this.userId,
@@ -122,14 +144,15 @@ export default {
     },
     buyAtOnce() {
       if (this.defaultAddress === null) {
+        this.$Toast.top("tp");
         alert("地址信息缺失");
         return;
       }
-      if (this.amount > this.productDetail.productVO.stock || this.amount < 1) {
+      if (this.amount > this.productDetails.stock || this.amount < 1) {
         alert("数量不合法！");
         return;
       }
-      if (this.productDetail.productVO.userId === this.currentUserInfo.userId) {
+      if (this.productDetails.userId === this.currentUserInfo.userId) {
         alert("您不能购买自己发布的商品！");
         return;
       }
@@ -138,12 +161,12 @@ export default {
       }
       const orderDetail = new Array();
       orderDetail.push({
-        "ownerId": this.productDetail.productVO.userId,
-        "productId": this.productDetail.productVO.productId,
-        "productName": this.productDetail.productVO.productName,
+        "ownerId": this.productDetails.userId,
+        "productId": this.productDetails.productId,
+        "productName": this.productDetails.productName,
         "productAmount": this.amount,
-        "productPrice": this.productDetail.productVO.price,
-        "iconUrl": this.productDetail.productVO.iconUrl,
+        "productPrice": this.productDetails.price,
+        "iconUrl": this.productDetails.iconUrl,
       });
       const orderDTO = {
         "userId": this.currentUserInfo.userId,
@@ -177,17 +200,17 @@ export default {
       });
     },
     addToCart() {
-      if (this.amount > this.productDetail.productVO.stock || this.amount < 1) {
+      if (this.amount > this.productDetails.stock || this.amount < 1) {
         alert("数量不合法！");
         return;
       }
-      if (this.productDetail.productVO.userId === this.currentUserInfo.userId) {
+      if (this.productDetails.userId === this.currentUserInfo.userId) {
         alert("您不能购买自己发布的商品！");
         return;
       }
       const cartDTO = {
         userId: this.userId,
-        productId: this.productDetail.productVO.productId,
+        productId: this.productDetails.productId,
         num: this.amount,
       };
       this.$axios.post("/cart/add", cartDTO, {

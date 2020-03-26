@@ -32,8 +32,9 @@
     </div>
     <div class="block">
       <b-pagination v-model="currentPage" total-rows="10000000" 
-        per-page="12" hide-goto-end-buttons="true" size="lg" first-number
-        @change="changeEvent()" @input="inputEvent()">
+        per-page="12" hide-goto-end-buttons="true" size="lg"
+        @change="changeEvent()" @input="inputEvent()"
+        >
       </b-pagination>
     </div>
   </div>
@@ -102,41 +103,8 @@ export default {
         }
       });
     },
-    async intoProductDetail(productVO) {
-      var productDetail = {};
-      await this.$axios.get("/product/detail", {
-        body: "with body",
-        params: {
-          productId: productVO.productId
-        }
-      }).then(response => {
-        if (response.data.status === "success") {
-          productDetail = response.data.body;
-        }
-      }).catch(response => {
-        alert(response);
-      });
-
-      this.$axios
-        .get("/user/part_info", {
-          //坑！无body时，get请求的Content-Type会被去掉，后端无法接受请求
-          body: "with body",
-          params: { 
-            userId: productVO.userId
-          }
-         })
-        .then(response => {
-          if (response.data.status === "success") {
-            this.$parent.$store.commit("updateProductDetail", {
-              userVO: response.data.body,
-              productVO: productDetail,
-            });
-            this.$parent.$router.push("/detail"); 
-          }
-        })
-        .catch(response => {
-          alert(response);
-        });
+    intoProductDetail(productVO) {
+      this.$parent.$router.push(`/detail/${productVO.productId}`);
     },
     getCategory(id) {
       switch (id) {

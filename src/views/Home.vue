@@ -1,11 +1,20 @@
 <template>
   <div>
-    <div style="margin-bottom: 15%; margin-left: 20%;" v-for="views in categoryHomeView" :key="views.categoryId">
-      <p style="font-size: 15px; text-align: left; ">{{getCategory(views.categoryId)}}</p>
-      <div style="float: left; margin-right: 1%;" v-for="productVO in views.topFive" :key="productVO.productId">
-        <img :src="productVO.iconUrl" height="150px" width="150px" />
-        
-      </div>
+    <div v-if="categoryHomeView===null">
+      <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
+    </div>
+    <div v-else style="margin-bottom: 3%; margin-left: 22%; margin-right: 22%;" v-for="views in categoryHomeView" :key="views.categoryId">
+      <b-card :header="getCategory(views.categoryId)" class="text-left">
+        <div 
+          style="float: left; margin-right: 1%; cursor: pointer;" 
+          @click="intoDetail(productVO.productId)"
+          v-for="productVO in views.topFive" :key="productVO.productId"
+        >
+          <img :src="productVO.iconUrl" height="150px" width="150px" />
+          <p align="center" style="margin: 0%;">{{productVO.productName}}</p>
+          <p align="center" style="margin: 0%; color: red; font-size: 15px;">￥{{productVO.price}}</p>
+        </div>
+      </b-card>
     </div>
   </div>
 </template>
@@ -14,7 +23,7 @@
 export default {
   data() {
     return {
-      categoryHomeView: [],
+      categoryHomeView: null,
     }
   },
   created() {
@@ -48,6 +57,9 @@ export default {
         default:
           return "未定义";
       }
+    },
+    intoDetail(id) {
+      this.$router.push(`/detail/${id}`);
     }
   }
 }

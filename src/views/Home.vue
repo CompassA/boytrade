@@ -3,16 +3,19 @@
     <div v-if="categoryHomeView===null">
       <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
     </div>
-    <div v-else style="margin-bottom: 3%; margin-left: 22%; margin-right: 22%;" v-for="views in categoryHomeView" :key="views.categoryId">
+    <div v-else 
+         style="margin-bottom: 3%; margin-left: 20%; margin-right: 20%;"
+         v-for="views in categoryHomeView" :key="views.categoryId"
+    >
       <b-card :header="getCategory(views.categoryId)" class="text-left">
         <div 
-          style="float: left; margin-right: 1%; cursor: pointer;" 
+          class="show_body" 
           @click="intoDetail(productVO.productId)"
           v-for="productVO in views.topFive" :key="productVO.productId"
         >
           <img :src="productVO.iconUrl" height="150px" width="150px" />
+          <b><p align="center" style="margin: 0%; color: red; font-size: 18px;">￥{{productVO.price}}</p></b>
           <p align="center" style="margin: 0%;">{{productVO.productName}}</p>
-          <p align="center" style="margin: 0%; color: red; font-size: 15px;">￥{{productVO.price}}</p>
         </div>
       </b-card>
     </div>
@@ -64,3 +67,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.show_body {
+  float: left;
+  margin-left: 1%;
+  padding-left: 1%;
+  cursor: pointer;
+  border: 2px solid whitesmoke;
+}
+</style>

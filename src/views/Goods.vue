@@ -1,35 +1,33 @@
 <template>
   <div>
     <div>
-      <b-dropdown id="type-dropdown" :text="dropMainText" style="margin-right: 80%">
-        <b-dropdown-item @click="getTypeList(-1)">全部</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(7)">游戏/玩具</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(6)">鞋子</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(5)">衣物</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(4)">化妆品</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(3)">生活用品</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(2)">电器</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(1)">书本资料</b-dropdown-item>
-        <b-dropdown-item @click="getTypeList(0)">其他</b-dropdown-item>
-      </b-dropdown>
+      <button class="type_button" @click="getTypeList(-1)">全部</button>
+      <button class="type_button" @click="getTypeList(7)">游戏/玩具</button>
+      <button class="type_button" @click="getTypeList(6)">鞋子</button>
+      <button class="type_button" @click="getTypeList(5)">衣物</button>
+      <button class="type_button" @click="getTypeList(4)">化妆品</button>
+      <button class="type_button" @click="getTypeList(3)">生活用品</button>
+      <button class="type_button" @click="getTypeList(2)">电器</button>
+      <button class="type_button" @click="getTypeList(1)">书本资料</button>
+      <button class="type_button" @click="getTypeList(0)">其他</button>
     </div>
-    <div class="lists">
-      <div class="cardBox" v-for="product in products" v-bind:key="product.productId">
+    <div  v-if="products !== null" style="height: 800px;">
+      <div
+        class="my_card" v-for="product in products" :key="product.productId" 
+        @click="intoProductDetail(product)" 
+      >
         <div class="bodyBox">
-          <img
-            v-bind:src="product.iconUrl"
-            width="150px"
-            height="150px"
-          />
+          <img :src="product.iconUrl" width="200px" height="200px" style="border-radius: 10px;" />
           <dl>
-            <dt>商品名：{{ product.productName }}</dt>
+            <b style="color: red; font-size: 20px; margin-left: 0%;">￥{{product.price}}</b>
+            <dt>{{ product.productName }}</dt>
             <dd>简介： {{ product.description.substring(0, 10) + (product.description.length > 10 ? "....": "") }}</dd>
             <dd>类别： {{ getCategory(product.categoryId) }} </dd>
           </dl>
-          <b-button variant="dark" @click="intoProductDetail(product)">查看详情</b-button>
         </div>
       </div>
     </div>
+    <div v-else><b-spinner class="m-5" label="Busy"></b-spinner></div>
     <div class="block">
       <b-pagination v-model="currentPage" total-rows="10000000" 
         per-page="12" hide-goto-end-buttons="true" size="lg"
@@ -89,6 +87,7 @@ export default {
       if (this.currentTypeId !== -1) {
         requestParams.typeId = this.currentTypeId;
       }
+      this.products = null;
       this.$axios.get("/product/page", { params: requestParams }).then(response => {
         if (response.data.status === "success") {
           this.products = response.data.body.views;
@@ -132,6 +131,7 @@ export default {
     },
     //改变类别状态，获取类别第一页数据，更新lastId，页码数据
     getTypeList(typeId) {
+      this.products = null;
       this.dropMainText = this.getCategory(typeId);
       this.currentTypeId = typeId;
       const requestParams = {
@@ -161,9 +161,6 @@ export default {
 </script>
 
 <style lang="scss">
-.lists {
-  height: 750px;
-}
 
 .block {
   margin-top: 1%;
@@ -171,23 +168,30 @@ export default {
   float: left;
 }
 
-.cardBox {
+.my_card {
   width: 230px;
   height: 340px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   text-align: center;
   float: left;
+  background-color: #cdd3d6;
+  border-radius: 30px;
   margin: 10px 10px 10px 10px;
-  padding: 5px;
-  padding-top: 15px;
+}
+
+.my_card :hover {
+  cursor: pointer;
+  background-color: grey;
+  border-radius: 30px;
 }
 
 .bodyBox {
-  padding: 10px;
+  height: 340px;
+  padding: 4%;
 }
 
 .bodyBox dl dt {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .bodyBox dl dd {
@@ -196,5 +200,12 @@ export default {
   text-align: left;
   margin-left: 5px;
   font-size: 13px;
+}
+
+.type_button {
+  border-radius: 8px;
+  background-color: black;
+  border: 2px solid black;
+  color: white;
 }
 </style>

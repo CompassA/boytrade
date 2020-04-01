@@ -1,20 +1,12 @@
 <template>
   <div>
-    <b-button-group>
+    <div>
       <b-button @click="getCreatedOrders()">待我付款</b-button>
       <b-button @click="getPaidOrders()">待卖家发货</b-button>
       <b-button @click="getSentOrders()">待我收货</b-button>
       <b-button @click="getFinishedOrders()">交易完成</b-button>
-    </b-button-group>
+    </div>
     <div class="order_model" v-for="order in orderList" v-bind:key="order.orderId">
-      <p>订单编号: {{order.orderId}}</p>
-      <p>订单总金额: <b style="color: red;">￥{{order.orderAmount}}</b></p>
-      <p>创建时间: {{order.createTime}}</p>
-      <p>买家姓名: {{order.userName}}</p>
-      <p>手机号码: {{order.userPhone}}</p>
-      <p>联系地址: {{order.userAddress}}</p>
-      <p v-if="selectButtonStatus === 1">{{order.leftTimeInfo}}</p>
-      <p>订单详情：</p>
       <b-table
         sticky-header
         small
@@ -30,6 +22,13 @@
           <b style="color: red;">￥{{ Math.round(Math.round(data.item.productPrice * 100) * data.item.productAmount) / 100}}</b>
         </template>
       </b-table>
+      <p>订单编号: {{order.orderId}}</p>
+      <p>订单总金额: <b style="color: red;">￥{{order.orderAmount}}</b></p>
+      <p>创建时间: {{order.createTime}}</p>
+      <p>买家姓名: {{order.userName}}</p>
+      <p>手机号码: {{order.userPhone}}</p>
+      <p>联系地址: {{order.userAddress}}</p>
+      <p v-if="selectButtonStatus === 1">{{order.leftTimeInfo}}</p>
       <div v-if="selectButtonStatus === 1">
         <b-button :disabled="order.leftTimeInfo === ''" variant="outline-dark" @click="pay(order)">立即付款</b-button>
         <b-button :disabled="order.leftTimeInfo === ''" variant="outline-dark" @click="cancel(order)">取消订单</b-button>
@@ -204,11 +203,14 @@ export default {
 
 <style lang="scss">
 .order_model {
-  margin-top: 20px;
-  margin-left: 100px;
-  padding: 10px 20px 10px 20px;
+  width: 35%;
+  margin: 2% 2% 2% 2%;
+  padding: 3% 3% 3% 3%;
   text-align: left;
   font-size: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.26);
+  background-color: whitesmoke;
+  float: left;
+  border-radius: 40px;
 }
 </style>

@@ -8,15 +8,13 @@
         <div>
           <div style="float: none;">
             <img
-              style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+              style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.27); border-radius: 30px;"
               v-bind:src="productDetails.iconUrl"
               width="400px"
               height="400px"
             />  
           </div>
-          <div style="float: none;">
-            <p>发布者: {{sellerVO.name}}</p>
-            <p>注册时间：{{sellerVO.createTime}}</p>
+          <div>
             <b-button variant="light" @click="goBack()">&lt;返回商品列表</b-button>
           </div>
         </div>
@@ -24,24 +22,22 @@
       <div id="content">
         <div style="margin: 50px 10px 10px 10px;">
           <p style="font-size: 30px; text-align: center;">
-            <b>商品名： {{productDetails.productName}}</b>
+            <b>{{productDetails.productName}}</b>
           </p>
-          <p style="font-size: 15px; text-align: center;">商家描述：{{productDetails.description}}</p>
+          <p style="font-size: 14px; text-align: center;">
+            <b>卖家</b>: {{sellerVO.name}} | <b>描述</b>: {{productDetails.description}}
+          </p>
           <p style="font-size: 15px; margin-left: 25px; margin-right: 20px;">
-            价格：
+            <b>价格</b>：
             <b style="color: red; font-size: 30px;">{{productDetails.price}}</b>
-            元
+            <b>元</b>  |  
 
-            销量：
-            <b style="font-size: 20px;">{{productDetails.sales}}</b>
-            件
+            <b>销量</b>：{{productDetails.sales}} <b>件</b>  |  
 
-            已付款: 
-            <b style="font-size: 20px;">{{productDetails.paidNum}}</b>
-             件
+            <b>已付款:</b>  {{productDetails.paidNum}} <b>件</b>
           </p>
           <div style="height: 20px; margin-left: 15px; font-size: 15px;">
-            数量
+            <b>数量</b>:
             <input
               style="margin-right: 20px;"
               type="number"
@@ -53,7 +49,7 @@
               oninput="if(value.length>6)value=value.slice(0,6)"
               v-model="amount"
             />
-            库存：
+            <b>库存</b>:
             <b>{{productDetails.stock}}</b>
           </div>
           <div v-if="productDetails.payStatus !== 0">
@@ -61,8 +57,8 @@
           </div>
         </div>
         <div style="float: none; margin-left: 10%;">
-          <b-button :disabled="productDetails.payStatus !== 0 ? true : false" pill variant="primary" @click="buyAtOnce()">立即购买</b-button>
-          <b-button :disabled="productDetails.payStatus !== 0 ? true : false" pill variant="primary" @click="addToCart()">加入购物车</b-button>
+          <b-button class="my_button" :disabled="productDetails.payStatus !== 0 ? true : false" pill @click="buyAtOnce()">立即下单</b-button>
+          <b-button class="my_button" :disabled="productDetails.payStatus !== 0 ? true : false" pill @click="addToCart()">加入购物车</b-button>
         </div>
       </div>
     </div>
@@ -243,5 +239,12 @@ export default {
   text-align: left;
   height: auto;
   float: left;
+}
+
+.my_button {
+  border-radius: 8px;
+  background-color: orangered;
+  border: 2px solid orangered;
+  margin: 1% 1% 1% 1%;
 }
 </style>

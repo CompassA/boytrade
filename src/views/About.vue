@@ -11,7 +11,7 @@
               <b-button variant="info" @click="intoPublish()">发布商品</b-button>
             </div>
             <div>
-              <b-button variant="info" @click="intoUserProduct()">商品管理</b-button>
+              <b-button variant="info" @click="intoUserProduct()">商品状态</b-button>
             </div>
             <div>
               <b-button variant="info" @click="intoOrder()">我买到的</b-button>
@@ -31,6 +31,9 @@
 
 <script>
 export default {
+  created() {
+    this.$parent.$router.push("/about/info_editor");
+  },
   methods: {
     intoInfoEditor() {
       this.$parent.$router.push("/about/info_editor");

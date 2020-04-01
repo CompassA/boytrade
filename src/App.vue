@@ -287,7 +287,7 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
   font-size: 18px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

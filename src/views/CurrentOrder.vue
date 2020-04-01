@@ -1,13 +1,9 @@
 <template>
   <div>
-    <div class="order_model">
-      <p>订单编号: {{order.orderId}}</p>
-      <p>订单总金额: <b style="color: red;">￥{{order.orderAmount}}</b></p>
-      <p>创建时间: {{order.createTime}}</p>
-      <p>买家姓名: {{order.userName}}</p>
-      <p>手机号码: {{order.userPhone}}</p>
-      <p>联系地址: {{order.userAddress}}</p>
-      <p>订单详情：</p>
+    <div class="order_model">  
+      <div>
+        <h3>当前订单：</h3>
+      </div>
       <b-table
         sticky-header
         small
@@ -22,6 +18,12 @@
           <b style="color: red;">￥{{ Math.round(Math.round(data.item.productPrice * 100) * data.item.productAmount) / 100 }}</b>
         </template>
       </b-table>
+      <p><b>订单编号</b>: {{order.orderId}}</p>
+      <p><b>订单总金额</b>: <b style="color: red;">￥{{order.orderAmount}}</b></p>
+      <p><b>创建时间</b>: {{order.createTime}}</p>
+      <p><b>买家姓名</b>: {{order.userName}}</p>
+      <p><b>手机号码</b>: {{order.userPhone}}</p>
+      <p><b>联系地址</b>: {{order.userAddress}}</p>
       <b-button variant="outline-dark" @click="pay(order)">立即付款</b-button>
       <b-button variant="outline-dark" @click="notPay()">暂不付款</b-button>
     </div>
@@ -82,10 +84,4 @@ export default {
 </script>
 
 <style lang="scss">
-.order_model {
-  padding: 10px 20px 10px 20px;
-  text-align: left;
-  font-size: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
 </style>

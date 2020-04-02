@@ -69,6 +69,9 @@ export default new Vuex.Store({
     updateCurrentOrder(state, value) {
       state.currentOrder = value;
     },
+    updateUserIconUrl(state, value) {
+      state.userinfo.iconUrl = value;
+    }
   },
   actions: {
   },

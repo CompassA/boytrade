@@ -20,7 +20,7 @@
           <b-nav small>
             <b-nav-item-dropdown v-bind:text="this.username" right>
               <b-dropdown-item @click="intoAbout()">
-                <img v-bind:src="this.iconUrl" alt="Kitten" />
+                <img v-bind:src="this.iconUrl" width="20px;" height="20px;"/>
                 个人中心
               </b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>

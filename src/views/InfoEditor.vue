@@ -1,5 +1,23 @@
 <template>
   <div>
+    <div style="margin: 1% 20% 3% 20%;">
+      <b-form @submit="submitImage" @reset="clearImage" enctype="multipart/form-data">
+        <p>当前头像</p>
+        <img :src="iconUrl" width="200px" height="200px"/>
+        <b-form-group id="upload_block" label="商品图片:" label-for="upload_icon">
+          <b-form-file
+            id="upload_icon"
+            v-model="iconFile"
+            placeholder="请上传头像图片"
+            accept=".jpg, .png"
+            required
+          >
+          </b-form-file>
+          <b-button type="submit" variant="primary" ref="userIconSub">更换</b-button>
+          <b-button type="reset" variant="danger">置空</b-button>
+        </b-form-group>
+      </b-form>
+    </div>
     <div>
       <b-button size="lg" variant="primary" @click="addNewInfo()">添加新的地址信息</b-button>
     </div>
@@ -93,6 +111,7 @@
 export default {
   data() {
     return {
+      iconFile: null,
       addressInfo: {
         userId: this.userId,
         userName: "",
@@ -144,6 +163,41 @@ export default {
       });
   },
   methods: {
+    submitImage(evt) {
+      evt.preventDefault();
+      if (this.iconFile.size  > 2 * 1024 * 1024) {
+        alert("图片不能大于2M！");
+        return;
+      }
+      this.$refs.userIconSub.disabled = true;
+      let imageData = new FormData();
+      imageData.append("imgFile", this.iconFile);
+      this.$axios
+        .post("/user/update_icon", imageData, {
+          params: {
+            token: this.token,
+            userId: this.userId,
+          }
+        })
+        .then(response => {
+          if (response.data.status === "success") {
+            this.$store.commit("updateUserIconUrl", response.data.body);
+            alert("上传成功");
+          } else {
+            alert(response.data.body.message);
+            this.iconFile = null;
+          }
+          this.$refs.userIconSub.disabled = false;
+        })
+        .catch(response => {
+          alert(response);
+          this.$refs.userIconSub.disabled = false;
+        });
+    },
+    clearImage(evt) {
+      this.iconFile = null;
+      evt.preventDefault();
+    },
     onSubmit(evt) {
       evt.preventDefault();
       this.$axios.put("/address/insert", this.addressInfo, {
@@ -282,6 +336,9 @@ export default {
     },
     userId: function() {
       return this.$parent.$store.state.userinfo.userId;
+    },
+    iconUrl: function() {
+      return this.$parent.$store.state.userinfo.iconUrl;
     }
   }
 };

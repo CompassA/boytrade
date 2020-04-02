@@ -27,7 +27,6 @@
               <b-dropdown-item @click="logout()">退出登录</b-dropdown-item>
             </b-nav-item-dropdown>
             <b-nav-item @click="intoShoppingcart()">购物车</b-nav-item>
-            <b-nav-item @click="intoFavourites()">收藏夹</b-nav-item>
           </b-nav>
         </div>
       </b-navbar-nav>
@@ -218,7 +217,7 @@ export default {
       this.$router.push("/goods");
     },
     intoAbout() {
-      this.$router.push("/about");
+      this.$router.push("/about/info_editor");
     },
     intoHome() {
       this.$router.push("/");

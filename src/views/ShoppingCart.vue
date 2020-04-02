@@ -28,7 +28,6 @@
         </template>
 
         <template v-slot:cell(ops)="data">
-          <div class="ops"><p @click="addToFavourites(data)">加入收藏夹</p></div>
           <div class="ops"><p @click="deleteFromCart(data)">删除</p></div>
         </template>
       </b-table> 
@@ -206,16 +205,13 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$router.go(0);
+          this.$router.push("/shoppingcart");
         } else {
           alert(response.data.body.message);
         }
       }).catch(response => {
         alert(response);
       })
-    },
-    addToFavourites(data) {
-      alert(JSON.stringify(data));
     },
     deleteCart(cartView) {
       if (!confirm("您确定要删除该商家的所有商品吗?")) {
@@ -229,7 +225,7 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$router.go(0);
+          this.$router.push("/shoppingcart");
         } else {
           alert(response.data.body.message);
         }

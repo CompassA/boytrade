@@ -92,7 +92,7 @@ export default {
       }).then(response => {
         if (response.data.status === "success") {
           alert("订单取消成功");
-          this.$router.go(0);
+          this.getCreatedOrders();
         } else {
           alert("订单取消失败\n" + response.data.body.message);
         }

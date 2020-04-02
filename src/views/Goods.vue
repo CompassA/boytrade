@@ -26,15 +26,15 @@
           </dl>
         </div>
       </div>
+      <div class="block">
+        <b-pagination v-model="currentPage" total-rows="10000000" 
+          per-page="12" hide-goto-end-buttons="true" size="lg"
+          @change="changeEvent()" @input="inputEvent()"
+        >
+        </b-pagination>
+      </div>
     </div>
     <div v-else><b-spinner class="m-5" label="Busy"></b-spinner></div>
-    <div class="block">
-      <b-pagination v-model="currentPage" total-rows="10000000" 
-        per-page="12" hide-goto-end-buttons="true" size="lg"
-        @change="changeEvent()" @input="inputEvent()"
-        >
-      </b-pagination>
-    </div>
   </div>
 </template>
 
@@ -163,9 +163,9 @@ export default {
 <style lang="scss">
 
 .block {
-  margin-top: 1%;
+  clear: both;
+  margin-top: 20%;
   margin-left: 35%;
-  float: left;
 }
 
 .my_card {

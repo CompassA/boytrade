@@ -9,6 +9,7 @@ let jsencrypt = new JSEncrypt();
 export default new Vuex.Store({
   state: {
     base64,
+    buyerButtonStatus: 1,
     sellerOrderButtionStatus: 1,
     userinfo: {
       userId: -1,
@@ -50,7 +51,8 @@ export default new Vuex.Store({
       state.jsencrypt.setPublicKey(value.public_key);
     },
     updateOrderList(state, value) {
-      state.orderList = value;
+      state.buyerButtonStatus = value.selectButtonStatus;
+      state.orderList = value.orderList;
     },
     updateSellerOrderList(state, value) {
       state.sellerOrderList = value;

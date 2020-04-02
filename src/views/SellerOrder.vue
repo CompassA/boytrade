@@ -1,12 +1,12 @@
 <template>
   <div>
-    <b-button-group>
+    <div>
       <b-button @click="getCreatedOrders()">未付款订单</b-button>
       <b-button @click="getPaidOrders()">待我发货</b-button>
       <b-button @click="getSentOrders()">待买家收货</b-button>
       <b-button @click="getFinishedOrders()">交易完成</b-button>
-    </b-button-group>
-    <div class="seller_order_model" v-for="order in this.sellerOrderList" v-bind:key="order.orderId">
+    </div>
+    <div class="order_model" v-for="order in this.sellerOrderList" v-bind:key="order.orderId">
       <p>订单编号: {{order.orderId}}</p>
       <p>订单总金额: <b style="color: red;">￥{{order.orderAmount}}</b></p>
       <p>创建时间: {{order.createTime}}</p>
@@ -185,12 +185,4 @@ export default {
 </script>
 
 <style lang="scss">
-.seller_order_model {
-  margin-top: 20px;
-  margin-left: 100px;
-  padding: 10px 20px 10px 20px;
-  text-align: left;
-  font-size: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
 </style>

@@ -31,9 +31,6 @@
 
 <script>
 export default {
-  created() {
-    this.$parent.$router.push("/about/info_editor");
-  },
   methods: {
     intoInfoEditor() {
       this.$parent.$router.push("/about/info_editor");

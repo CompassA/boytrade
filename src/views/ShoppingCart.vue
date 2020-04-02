@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div v-for="cartView in cartViews" :key=cartView.sellerId>
+    <div 
+      v-for="cartView in cartViews" :key=cartView.sellerId 
+      style="width: 51%; margin: 2% 20% 2% 20%; background-color: ghostwhite;"
+    >
       <hr style="height:3px;border:none;border-top:3px double red;" />
       <b style="font-size: 20px; align: left;">卖家名称: {{ cartView.sellerName }}</b>
-      <b-table :fields="fields" :items="cartView.cartDetails" caption-top>  
+      <b-table sticky-header :fields="fields" :items="cartView.cartDetails" caption-top>  
         <template v-slot:cell(selected)="data">
            <b-form-checkbox
             v-model="cartView.selectedIds"
@@ -35,8 +38,8 @@
             <p>总金额：<b style="color: red;"> ￥{{ totalMoney(cartView) }}</b></p>
           </b-col>
           <b-col md="7">
-            <b-button @click="pay(cartView)">立即下单</b-button>
-            <b-button @click="deleteCart(cartView)">删除</b-button>
+            <button class="cart_button" @click="pay(cartView)">立即下单</button>
+            <button @click="deleteCart(cartView)">删除</button>
           </b-col>
         </b-row>
       </b-container>
@@ -244,5 +247,13 @@ export default {
 }
 .ops:hover {
   cursor: pointer;
+}
+
+.cart_button {
+  border-radius: 8px;
+  background-color: orangered;
+  border: 2px solid orangered;
+  color: white;
+  margin: 1% 1% 1% 1%;
 }
 </style>

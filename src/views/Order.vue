@@ -11,6 +11,9 @@
         sticky-header
         small
         caption-top
+        responsive
+        no-border-collapse="false"
+        style="height: 200px;"
         :items="order.orderDetails"
         :fields="fields"
       >
@@ -55,6 +58,12 @@ export default {
     userId: function() {
       return this.$parent.$store.state.userinfo.userId;
     },
+    selectButtonStatus: function() {
+      return this.$parent.$store.state.buyerButtonStatus;
+    },
+    orderList: function() {
+      return this.$parent.$store.state.orderList;
+    }
   },
   data() {
     return {
@@ -65,8 +74,6 @@ export default {
         { key: "sum", label: "总价" },
         { key: "iconUrl", label: "图片" }
       ],
-      selectButtonStatus: 1,
-      orderList: [],
     };
   },
   methods: {
@@ -104,7 +111,7 @@ export default {
       }).then(response => {
         if (response.data.status === "success") {
           alert("确认收货成功！");
-          this.getFinishedOrders();
+          this.getSentOrders();
         } else {
           alert("确认收货失败！\n" + response.data.body.message);
         }
@@ -138,8 +145,11 @@ export default {
           }
           intervalTask();
           setInterval(intervalTask, 1000);
-          this.selectButtonStatus = 1;
-          this.orderList = orderList;
+          const passData = {
+            "selectButtonStatus": 1,
+            "orderList": orderList,
+          };
+          this.$store.commit("updateOrderList", passData);
         } else {
           alert(response.data.body.message);
         }
@@ -154,8 +164,11 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.selectButtonStatus = 2;
-          this.orderList = response.data.body;
+          const passData = {
+            "selectButtonStatus": 2,
+            "orderList": response.data.body,
+          };
+          this.$store.commit("updateOrderList", passData);
         } else {
           alert(response.data.body.message);
         }
@@ -170,8 +183,11 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.selectButtonStatus = 3;
-          this.orderList = response.data.body;
+          const passData = {
+            "selectButtonStatus": 3,
+            "orderList": response.data.body,
+          };
+          this.$store.commit("updateOrderList", passData);
         } else {
           alert(response.data.body.message);
         }
@@ -186,8 +202,11 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.selectButtonStatus = 4;
-          this.orderList = response.data.body;
+          const passData = {
+            "selectButtonStatus": 4,
+            "orderList": response.data.body,
+          };
+          this.$store.commit("updateOrderList", passData);
         } else {
           alert(response.data.body.message);
         }
@@ -195,8 +214,20 @@ export default {
     },
   },
   created() {
-    this.selectButtonStatus = 1;
-    this.getCreatedOrders();
+    switch (this.selectButtonStatus) {
+      case 1:
+        this.getCreatedOrders();
+        break;
+      case 2:
+        this.getPaidOrders();
+        break;
+      case 3:
+        this.getSentOrders();
+        break;
+      case 4:
+        this.getFinishedOrders();
+        break;
+    }
   }
 };
 </script>

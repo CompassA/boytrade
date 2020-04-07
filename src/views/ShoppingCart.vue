@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div 
+    <div v-if="cartViews.length === 0">
+      <p style="margin: 10% 10% 10% 10%; font-size: 14px;">购物车为空</p>
+    </div>
+    <div v-else
       v-for="cartView in cartViews" :key=cartView.sellerId 
       style="width: 51%; margin: 2% 20% 2% 20%; background-color: ghostwhite;"
     >
@@ -52,7 +55,7 @@ import utils from '../js/utils';
 export default {
   data() {
     return {
-      cartViews: null,
+      cartViews: [],
       fields: [
         { key: 'selected', label: ''},
         { key: 'productName', label: '商品名称' },
@@ -70,7 +73,7 @@ export default {
       return window.localStorage["token"];
     },
     userId: function() {
-      return this.$parent.$store.state.userinfo.userId;
+      return window.localStorage["boytrade:userId"];
     },
     addressInfo: function() {
       return this.$parent.$store.state.defaultAddress;
@@ -92,6 +95,11 @@ export default {
     }).catch(response => {
       alert(response);
     });
+    for (let i = 0; i < 10; ++i) {
+      if (this.addressInfo !== null) {
+        break;
+      }
+    }
     if (this.addressInfo === null) {
       this.$axios.get("/address/default", {
         params: {
@@ -205,7 +213,7 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$router.push("/shoppingcart");
+          this.$router.go(0);
         } else {
           alert(response.data.body.message);
         }
@@ -225,7 +233,7 @@ export default {
         }
       }).then(response => {
         if (response.data.status === "success") {
-          this.$router.push("/shoppingcart");
+          this.$router.go(0);
         } else {
           alert(response.data.body.message);
         }

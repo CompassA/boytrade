@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="order_model">  
+    <div class="cur_order_model">  
       <div>
         <h3>当前订单：</h3>
       </div>
@@ -84,4 +84,15 @@ export default {
 </script>
 
 <style lang="scss">
+.cur_order_model {
+  width: 35%;
+  margin: 2% 2% 2% 2%;
+  padding: 3% 3% 3% 3%;
+  text-align: left;
+  font-size: 15px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.26);
+  background-color: whitesmoke;
+  float: left;
+  border-radius: 40px;
+}
 </style>

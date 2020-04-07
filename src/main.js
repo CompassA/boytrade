@@ -8,8 +8,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import axios from 'axios'
 
 Vue.prototype.$axios = axios.create({
+  baseURL: 'http://101.133.161.59:80/api',
   //baseURL: 'http://47.103.146.40:8090/',
-  baseURL: 'http://localhost:8090/',
+  //baseURL: 'http://localhost:8090/',
   withCredentials: true,
   headers: {
     //'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'

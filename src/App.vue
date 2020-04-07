@@ -5,12 +5,12 @@
       <b-navbar-nav tabs class="mr-auto">
         <b-nav-item @click="intoGoods()">全部商品</b-nav-item>
       </b-navbar-nav>
-      <b-navbar-nav class="ml-auto">
+      <!-- <b-navbar-nav class="ml-auto">
         <b-nav-form>
           <b-form-input class="mr-sm-2" placeholder="Search"></b-form-input>
           <b-button variant="secondary" class="my-2 my-sm-0">搜索</b-button>
         </b-nav-form>
-      </b-navbar-nav>
+      </b-navbar-nav> -->
       <b-navbar-nav class="ml-auto">
         <div v-if="!this.isLogin">
           <b-button v-b-modal.login variant="light">登录</b-button>
@@ -138,6 +138,7 @@ export default {
       if (response.data.status === "success") {
         if (response.data.body !== null) {
           this.$store.commit("login", { userinfo: response.data.body });
+          window.localStorage["boytrade:userId"] = response.data.body.userId;
         } 
       }
     }).catch(response => {

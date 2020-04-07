@@ -188,6 +188,7 @@ export default {
               userinfo: response.data.body
             });
             window.localStorage["token"] = response.data.body.token;
+            window.localStorage["boytrade:userId"] = response.data.body.userId;
             this.$bvModal.hide("login");
           } else {
             alert("登录失败, 原因： " + response.data.body.message);
@@ -206,6 +207,7 @@ export default {
       });
       this.$store.commit("logout");
       window.localStorage["token"] = "";
+      window.localStorage["boytrade:userId"] = -1;
       this.$router.push("/");
     },
     intoShoppingcart() {
@@ -256,6 +258,7 @@ export default {
               userinfo: response.data.body
             });
             window.localStorage["token"] = response.data.body.token;
+            window.localStorage["boytrade:userId"] = response.data.body.userId;
             this.$bvModal.hide("signup");
           } else {
             alert("注册失败！" + response.data.body.message);

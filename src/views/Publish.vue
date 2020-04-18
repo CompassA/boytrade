@@ -1,7 +1,7 @@
 <template>
   <div style="margin: 2% 20% 10% 10%;">
     <b-form @submit="onSubmit" @reset="onReset" enctype="multipart/form-data" v-if="show">
-      <b-form-group id="productName" label="商品名称" label-for="txtProductName">
+      <b-form-group id="productName" label="商品名称" maxlength="20" label-for="txtProductName">
         <b-form-input id="txtProductName" v-model="product.productName" required placeholder="请输入商品名称"></b-form-input>
       </b-form-group>
 

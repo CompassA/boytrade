@@ -43,8 +43,8 @@
 
     <!--登录模态框-->
     <b-modal id="login" title="登录" hide-footer="true">
-      <div align="center">
-        <label for="txtAccount">账号:</label>
+      <div><label for="txtAccount">用户名/账号:</label></div>
+      <div>
         <input
           type="text"
           v-model="account"
@@ -54,8 +54,8 @@
           title="请输入账号"
         />
       </div>
-      <div align="center">
-        <label for="txtPassword">密码:</label>
+      <div><label for="txtPassword">密码:</label></div>
+      <div>
         <input
           type="password"
           v-model="password"
@@ -65,15 +65,15 @@
           title="请输入密码"
         />
       </div>
-      <div align="center">
+      <div>
         <b-button variant="outline-primary" @click="login()">登录</b-button>
       </div>
     </b-modal>
 
     <!--注册模态框-->
     <b-modal id="signup" title="注册" hide-footer="true">
+      <div><label for="txtUserName">用户名:</label></div>
       <div>
-        <label for="txtUserName">用户名:</label>
         <input
           type="text"
           v-model="signup_username"
@@ -83,8 +83,8 @@
           title="请输入用户名"
         />
       </div>
+      <div><label for="txtPassword">密码:</label></div>
       <div>
-        <label for="txtPassword">密码:</label>
         <input
           type="password"
           v-model="signup_password"
@@ -94,8 +94,8 @@
           title="请输入密码"
         />
       </div>
+      <div><label for="txtValidator">确认密码:</label></div>
       <div>
-        <label for="txtValidator">确认密码:</label>
         <input
           type="password"
           v-model="signup_validator"
@@ -190,6 +190,7 @@ export default {
             window.localStorage["token"] = response.data.body.token;
             window.localStorage["boytrade:userId"] = response.data.body.userId;
             this.$bvModal.hide("login");
+            this.$router.push("/");
           } else {
             alert("登录失败, 原因： " + response.data.body.message);
           }
@@ -260,6 +261,7 @@ export default {
             window.localStorage["token"] = response.data.body.token;
             window.localStorage["boytrade:userId"] = response.data.body.userId;
             this.$bvModal.hide("signup");
+            this.$router.push("/");
           } else {
             alert("注册失败！" + response.data.body.message);
           }

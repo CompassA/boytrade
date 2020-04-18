@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="block">
-        <b-pagination v-model="currentPage" total-rows="10000000" 
+        <b-pagination v-model="currentPage" total-rows="1000000" 
           per-page="12" hide-goto-end-buttons="true" size="lg"
           @change="changeEvent()" @input="inputEvent()"
         >
@@ -47,10 +47,15 @@ export default {
       lastProductId: 0,
       products: [],
       currentTypeId: -1,
-      dropMainText: "全部"
+      dropMainText: "全部",
+      typeMaxMap: null,
     }
   },
   created() {
+    this.typeMaxMap = new Map();
+    for (let i = -1; i <= 7; ++i) {
+      this.typeMaxMap.set(i, 1000000);
+    }
     const requestParams = {
       "prePage": 0,
       "targetPage": 1,
@@ -78,6 +83,9 @@ export default {
     },
     inputEvent() {
       //获取这一页、前一页、前一页最后一个商品id
+      if (this.currentPage > this.typeMaxMap.get(this.currentTypeId)) {
+        return;
+      }
       const passPreLastId = (this.currentPage <= this.prePageNo) ? 0 : this.lastProductId;
       const requestParams = {
         "prePage": this.prePageNo,
@@ -93,8 +101,12 @@ export default {
           this.products = response.data.body.views;
           //更新前一页最后商品id
           if (this.products.length > 0) {
+            if (this.products.length < 12) {
+              this.typeMaxMap.set(this.currentTypeId, this.currentPage);
+            }
             this.lastProductId = this.products[this.products.length - 1].productId;
           } else {
+            this.typeMaxMap.set(this.currentTypeId, this.currentPage-1);
             this.lastProductId = 0;
           }
         } else {
@@ -174,7 +186,7 @@ export default {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   text-align: center;
   float: left;
-  background-color: #cdd3d6;
+  background-color: rgb(243, 243, 240);
   border-radius: 30px;
   margin: 10px 10px 10px 10px;
 }

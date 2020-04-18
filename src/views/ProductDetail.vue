@@ -87,7 +87,7 @@ export default {
       return this.$store.state.defaultAddress;
     },
     userId: function() {
-      return this.$parent.$store.state.userinfo.userId;
+      return window.localStorage["boytrade:userId"];
     },
   },
   async created() {
@@ -114,8 +114,10 @@ export default {
     }).catch(response => {
       alert(response);
     });
-    
-    if (this.defaultAddress === null && this.userId != -1) {
+    if (this.userId == -1 || this.userId === undefined) {
+      return;
+    }
+    if (this.defaultAddress === null) {
       this.$axios.get("/address/default", {
         params: {
           userId: this.userId,
@@ -139,6 +141,10 @@ export default {
       this.$parent.$router.go(-1);
     },
     buyAtOnce() {
+      if (this.userId === undefined || this.userId == -1) {
+        alert("请登录");
+        return;
+      }
       if (this.defaultAddress === null) {
         this.$Toast.top("tp");
         alert("地址信息缺失");
@@ -196,6 +202,10 @@ export default {
       });
     },
     addToCart() {
+      if (this.userId === undefined || this.userId == -1) {
+        alert("请登录");
+        return;
+      }
       if (this.amount > this.productDetails.stock || this.amount < 1) {
         alert("数量不合法！");
         return;
